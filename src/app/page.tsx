@@ -18,14 +18,20 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/Logo";
+import { HowItWorksDemo } from "@/components/HowItWorksDemo";
+import { UseCases } from "@/components/UseCases";
+import { Reveal } from "@/components/Reveal";
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 function Navbar() {
+  // Pricing was removed (no plans yet — the marketing site shouldn't promise
+  // something we don't have). "Community" is new: the curated user-submitted
+  // template gallery at /community.
   const links: { href: string; label: string; external?: boolean }[] = [
     { href: "#features",     label: "Features" },
     { href: "#how-it-works", label: "How it works" },
-    { href: "/templates",    label: "Templates", external: true },
-    { href: "#pricing",      label: "Pricing" },
+    { href: "/templates",    label: "Templates",  external: true },
+    { href: "/community",    label: "Community",  external: true },
   ];
 
   return (
@@ -138,7 +144,7 @@ function Hero() {
           ))}
         </div>
 
-        {/* Editor mockup */}
+        {/* Static editor preview */}
         <div className="relative mt-16">
           <EditorMockup />
         </div>
@@ -156,7 +162,7 @@ function EditorMockup() {
         <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
         <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
         <span className="ml-3 font-mono text-[11px] text-muted-foreground">
-          mitochondrial-pathway · untitled
+          pcr-amplification · figure-01
         </span>
       </div>
 
@@ -178,7 +184,7 @@ function EditorMockup() {
           </div>
         </aside>
 
-        {/* Canvas */}
+        {/* Canvas — a stylised three-stage PCR amplification diagram. */}
         <div className="relative bg-background p-6">
           <svg
             viewBox="0 0 360 200"
@@ -193,27 +199,96 @@ function EditorMockup() {
             </defs>
             <rect width="360" height="200" fill="url(#dots)" />
 
-            <ellipse cx="100" cy="100" rx="62" ry="48"
-              className="fill-primary/10 stroke-primary/70" strokeWidth="1.5" />
-            <circle cx="92" cy="98" r="14" className="fill-primary/30 stroke-primary" strokeWidth="1.2" />
-            <ellipse cx="118" cy="110" rx="9" ry="5" className="fill-foreground/10 stroke-foreground/40" strokeWidth="1" />
+            {/* Faint vertical dividers between phases */}
+            <line x1="122" y1="38" x2="122" y2="172" className="stroke-border" strokeWidth={1} strokeDasharray="2 4" />
+            <line x1="238" y1="38" x2="238" y2="172" className="stroke-border" strokeWidth={1} strokeDasharray="2 4" />
 
-            <path d="M170 100 H230" stroke="currentColor" className="text-foreground/60" strokeWidth="1.6" strokeLinecap="round" />
-            <path d="M225 95 L235 100 L225 105" stroke="currentColor" className="text-foreground/60" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-
-            <g transform="translate(248,72)">
-              <rect width="84" height="56" rx="22" className="fill-[oklch(0.92_0.06_60)] stroke-[oklch(0.55_0.13_60)]" strokeWidth="1.4" />
-              {Array.from({ length: 5 }).map((_, i) => (
-                <path key={i} d={`M${10 + i * 16} 8 Q${18 + i * 16} 28 ${10 + i * 16} 48`}
-                  className="stroke-[oklch(0.55_0.13_60)]" strokeWidth="1.2" fill="none" />
-              ))}
-            </g>
-
-            <text x="100" y="166" textAnchor="middle" className="fill-muted-foreground" style={{ font: "italic 10px var(--font-display, serif)" }}>
-              cell
+            {/* ── Panel 1: Denaturation 95°C ─────────────────────── */}
+            <text x="64" y="50" textAnchor="middle" className="fill-primary"
+                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
+              95°C
             </text>
-            <text x="290" y="148" textAnchor="middle" className="fill-muted-foreground" style={{ font: "italic 10px var(--font-display, serif)" }}>
-              mitochondrion
+            {/* Strands separating */}
+            <path d="M 24 86 Q 64 74 104 86" fill="none" className="stroke-primary"
+                  strokeWidth={1.6} strokeLinecap="round" />
+            <path d="M 24 114 Q 64 126 104 114" fill="none" className="stroke-primary"
+                  strokeWidth={1.6} strokeLinecap="round" />
+            {/* Broken base-pair hashes (sparser toward middle = "more melted") */}
+            {[
+              { x: 36, op: 0.35 },
+              { x: 50, op: 0.18 },
+              { x: 64, op: 0.0  },
+              { x: 78, op: 0.18 },
+              { x: 92, op: 0.35 },
+            ].map((h) => (
+              <line key={h.x} x1={h.x} y1={88} x2={h.x} y2={112}
+                    className="stroke-foreground" strokeWidth={0.8}
+                    strokeDasharray="2 2" opacity={h.op} />
+            ))}
+            <text x="64" y="170" textAnchor="middle" className="fill-muted-foreground"
+                  style={{ font: "italic 11px var(--font-display, serif)" }}>
+              denaturation
+            </text>
+
+            {/* Arrow 1 → 2 */}
+            <path d="M 110 100 H 130" className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" />
+            <path d="M 126 96 L 132 100 L 126 104" fill="none"
+                  className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
+
+            {/* ── Panel 2: Annealing 55°C ────────────────────────── */}
+            <text x="180" y="50" textAnchor="middle" className="fill-primary"
+                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
+              55°C
+            </text>
+            {/* Top single strand + primer (right end) */}
+            <line x1="140" y1="92" x2="220" y2="92"
+                  className="stroke-primary" strokeWidth={1.6} strokeLinecap="round" />
+            <line x1="200" y1="92" x2="220" y2="92"
+                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
+            {/* Bottom single strand + primer (left end) */}
+            <line x1="140" y1="112" x2="220" y2="112"
+                  className="stroke-primary" strokeWidth={1.6} strokeLinecap="round" />
+            <line x1="140" y1="112" x2="160" y2="112"
+                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
+            <text x="180" y="170" textAnchor="middle" className="fill-muted-foreground"
+                  style={{ font: "italic 11px var(--font-display, serif)" }}>
+              annealing
+            </text>
+
+            {/* Arrow 2 → 3 */}
+            <path d="M 226 100 H 246" className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" />
+            <path d="M 242 96 L 248 100 L 242 104" fill="none"
+                  className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
+
+            {/* ── Panel 3: Extension 72°C ────────────────────────── */}
+            <text x="296" y="50" textAnchor="middle" className="fill-primary"
+                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
+              72°C
+            </text>
+            {/* Top: extending strand (thicker), primer at left, polymerase blob at right */}
+            <line x1="252" y1="92" x2="340" y2="92"
+                  className="stroke-primary" strokeWidth={2} strokeLinecap="round" />
+            <line x1="252" y1="92" x2="270" y2="92"
+                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
+            <circle cx="328" cy="92" r="6.5"
+                    className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.4} />
+            {/* Bottom: mirror of the above */}
+            <line x1="252" y1="112" x2="340" y2="112"
+                  className="stroke-primary" strokeWidth={2} strokeLinecap="round" />
+            <line x1="322" y1="112" x2="340" y2="112"
+                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
+            <circle cx="264" cy="112" r="6.5"
+                    className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.4} />
+            <text x="296" y="170" textAnchor="middle" className="fill-muted-foreground"
+                  style={{ font: "italic 11px var(--font-display, serif)" }}>
+              extension
+            </text>
+
+            {/* "× 30 cycles" caption */}
+            <text x="350" y="190" textAnchor="end"
+                  className="fill-muted-foreground/70"
+                  style={{ font: "italic 9px var(--font-display, serif)" }}>
+              × 30 cycles
             </text>
           </svg>
 
@@ -240,21 +315,25 @@ function Features() {
   return (
     <section id="features" className="px-6 py-28">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading
-          eyebrow="Features"
-          title="Designed for the page, not the demo."
-          subtitle="The minimum surface area you need to build a clear, accurate scientific figure — and nothing more."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Features"
+            title="Designed for the page, not the demo."
+            subtitle="The minimum surface area you need to build a clear, accurate scientific figure — and nothing more."
+          />
+        </Reveal>
 
         <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
-          {features.map(({ Icon, title, body }) => (
-            <div key={title} className="group bg-background p-7 transition-colors hover:bg-muted/40">
-              <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-accent text-accent-foreground">
-                <Icon className="h-[18px] w-[18px]" strokeWidth={1.6} />
+          {features.map(({ Icon, title, body }, i) => (
+            <Reveal key={title} delay={i * 0.05}>
+              <div className="group h-full bg-background p-7 transition-colors hover:bg-muted/40">
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-accent text-accent-foreground transition-transform group-hover:rotate-[-4deg] group-hover:scale-110">
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={1.6} />
+                </div>
+                <h3 className="font-display text-[20px] leading-tight text-foreground">{title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{body}</p>
               </div>
-              <h3 className="font-display text-[20px] leading-tight text-foreground">{title}</h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{body}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -262,36 +341,22 @@ function Features() {
   );
 }
 
-// ─── How it works ─────────────────────────────────────────────────────────────
-const steps = [
-  { n: "01", title: "Open the editor",      body: "Sign up in seconds — no card, no setup. The canvas opens instantly." },
-  { n: "02", title: "Compose your figure",  body: "Drag from the library, snap to the grid, label and recolour as you go." },
-  { n: "03", title: "Export and publish",   body: "Download a vector or print-ready raster. Drop it straight into your manuscript." },
-];
-
+// ─── How it works (now an animated demo) ─────────────────────────────────────
 function HowItWorks() {
   return (
     <section id="how-it-works" className="border-y border-border bg-muted/30 px-6 py-28">
-      <div className="mx-auto max-w-5xl">
-        <SectionHeading
-          eyebrow="Workflow"
-          title="Three steps. Then back to the science."
-        />
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Workflow"
+            title="Three steps. Then back to the science."
+            subtitle="Watch a figure get drafted in real time. The mockup below auto-plays the workflow on a loop while you scroll."
+          />
+        </Reveal>
 
-        <ol className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3">
-          {steps.map((s, i) => (
-            <li key={s.n} className="relative">
-              {i < steps.length - 1 && (
-                <div className="absolute left-12 right-0 top-5 hidden h-px bg-border md:block" />
-              )}
-              <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background font-mono text-[12px] font-medium tracking-wide text-foreground">
-                {s.n}
-              </div>
-              <h3 className="font-display text-[22px] leading-tight text-foreground">{s.title}</h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{s.body}</p>
-            </li>
-          ))}
-        </ol>
+        <div className="mt-14">
+          <HowItWorksDemo />
+        </div>
       </div>
     </section>
   );
@@ -351,6 +416,7 @@ function Footer() {
               ["Features", "#features"],
               ["How it works", "#how-it-works"],
               ["Templates", "/templates"],
+              ["Community", "/community"],
             ]} />
             <FooterCol title="Account" links={[
               ["Log in",    "/login"],
@@ -418,6 +484,7 @@ export default function Home() {
         <Hero />
         <Features />
         <HowItWorks />
+        <UseCases />
         <CtaBanner />
       </main>
       <Footer />

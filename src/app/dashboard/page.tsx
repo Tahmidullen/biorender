@@ -70,8 +70,14 @@ export default function DashboardPage() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <Logo size="sm" />
           <div className="flex items-center gap-4">
+            <Link
+              href="/community"
+              className="hidden text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+            >
+              Community
+            </Link>
             {userEmail && (
-              <span className="hidden font-mono text-[12px] text-muted-foreground sm:block">
+              <span className="hidden font-mono text-[12px] text-muted-foreground md:block">
                 {userEmail}
               </span>
             )}

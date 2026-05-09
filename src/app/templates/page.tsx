@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Plus } from "lucide-react";
 import { TEMPLATES } from "@/lib/templates";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -24,13 +24,31 @@ export default function TemplatesPage() {
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/75 backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <Logo size="sm" />
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to workspace
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/community"
+              className="hidden text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+            >
+              Community
+            </Link>
+            <Link
+              href="/community/submit"
+              className={cn(
+                buttonVariants({ size: "sm", variant: "outline" }),
+                "h-8 gap-1.5 text-[12px]",
+              )}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Submit a template
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Workspace
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -105,6 +123,3 @@ function TemplateCard({ template }: { template: typeof TEMPLATES[number] }) {
     </Link>
   );
 }
-
-// Suppress unused import warning — buttonVariants is available for extending
-void (buttonVariants);
