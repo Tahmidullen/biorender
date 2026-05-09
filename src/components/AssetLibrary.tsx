@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { ICONS, ICON_CATEGORIES, type IconAsset } from "@/lib/assets";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Props = {
   onSelectIcon: (icon: IconAsset) => void;
@@ -27,70 +31,38 @@ export default function AssetLibrary({ onSelectIcon }: Props) {
   });
 
   return (
-    <aside style={{
-      width: 220,
-      minWidth: 220,
-      display: "flex",
-      flexDirection: "column",
-      background: "#ffffff",
-      borderRight: "1px solid #e5e7eb",
-      height: "100%",
-      overflow: "hidden",
-    }}>
+    <aside className="w-56 min-w-56 flex flex-col bg-white border-r border-gray-200 h-full overflow-hidden">
 
-      {/* ── Header ── */}
-      <div style={{ padding: "14px 14px 10px", borderBottom: "1px solid #f3f4f6" }}>
-        <p style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+      {/* Header */}
+      <div className="px-3 pt-3 pb-2 border-b border-gray-100">
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">
           Icon Library
         </p>
-        <div style={{ position: "relative" }}>
-          <span style={{ position: "absolute", left: 9, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#9ca3af" }}>🔍</span>
-          <input
+        <div className="relative">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">🔍</span>
+          <Input
             type="text"
-            placeholder="Search icons..."
+            placeholder="Search icons…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{
-              width: "100%",
-              paddingLeft: 28,
-              paddingRight: 10,
-              paddingTop: 6,
-              paddingBottom: 6,
-              fontSize: 12,
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-              background: "#f9fafb",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
+            className="pl-7 h-8 text-xs bg-gray-50"
           />
         </div>
       </div>
 
-      {/* ── Category tabs (hidden when searching) ── */}
+      {/* Category buttons (hidden when searching) */}
       {!search.trim() && (
-        <div style={{ padding: "8px 8px 0" }}>
+        <div className="px-2.5 pt-2 pb-1 flex flex-col gap-0.5">
           {ICON_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                textAlign: "left",
-                padding: "7px 10px",
-                borderRadius: 8,
-                marginBottom: 2,
-                border: "none",
-                background: activeCategory === cat ? "#f0fdfa" : "transparent",
-                color: activeCategory === cat ? "#0f766e" : "#6b7280",
-                fontWeight: activeCategory === cat ? 600 : 500,
-                fontSize: 12,
-                cursor: "pointer",
-                transition: "background 0.1s",
-              }}
+              className={[
+                "w-full flex items-center gap-2 text-left px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                activeCategory === cat
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-gray-100 hover:text-gray-800",
+              ].join(" ")}
             >
               <span>{CATEGORY_ICONS[cat]}</span>
               <span>{cat}</span>
@@ -99,41 +71,35 @@ export default function AssetLibrary({ onSelectIcon }: Props) {
         </div>
       )}
 
-      {/* ── Icons grid ── */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "10px 10px 0" }}>
-        {search.trim() && (
-          <p style={{ fontSize: 11, color: "#9ca3af", marginBottom: 8 }}>
+      {/* Search result count badge */}
+      {search.trim() && (
+        <div className="px-3 pt-2">
+          <Badge variant="secondary" className="text-[10px]">
             {filteredIcons.length} result{filteredIcons.length !== 1 ? "s" : ""} for &ldquo;{search}&rdquo;
-          </p>
-        )}
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 6,
-        }}>
-          {filteredIcons.map((icon) => (
-            <IconButton key={icon.id} icon={icon} onSelect={onSelectIcon} />
-          ))}
+          </Badge>
         </div>
+      )}
 
-        {filteredIcons.length === 0 && (
-          <div style={{ textAlign: "center", paddingTop: 32 }}>
-            <p style={{ fontSize: 24, marginBottom: 4 }}>🔍</p>
-            <p style={{ fontSize: 12, color: "#9ca3af" }}>No icons found</p>
+      {/* Icons grid */}
+      <ScrollArea className="flex-1 px-2 pt-2">
+        {filteredIcons.length > 0 ? (
+          <div className="grid grid-cols-3 gap-1.5 pb-4">
+            {filteredIcons.map((icon) => (
+              <IconButton key={icon.id} icon={icon} onSelect={onSelectIcon} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <span className="text-2xl mb-1">🔍</span>
+            <p className="text-xs text-muted-foreground">No icons found</p>
           </div>
         )}
-      </div>
+      </ScrollArea>
 
-      {/* ── Footer ── */}
-      <div style={{
-        padding: "10px 14px",
-        borderTop: "1px solid #f3f4f6",
-        background: "#f9fafb",
-        marginTop: 8,
-      }}>
-        <p style={{ fontSize: 10, color: "#9ca3af", textAlign: "center" }}>
-          Click any icon to add it to the canvas
+      {/* Footer */}
+      <div className="px-3 py-2 border-t border-gray-100 bg-gray-50">
+        <p className="text-[10px] text-muted-foreground text-center">
+          Click any icon to add it
         </p>
       </div>
     </aside>
@@ -141,44 +107,21 @@ export default function AssetLibrary({ onSelectIcon }: Props) {
 }
 
 function IconButton({ icon, onSelect }: { icon: IconAsset; onSelect: (i: IconAsset) => void }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
-    <button
-      onClick={() => onSelect(icon)}
-      title={`Add ${icon.name}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 3,
-        padding: 6,
-        borderRadius: 10,
-        border: hovered ? "1.5px solid #99f6e4" : "1.5px solid transparent",
-        background: hovered ? "#f0fdfa" : "transparent",
-        cursor: "pointer",
-        aspectRatio: "1",
-        transition: "all 0.1s",
-        transform: hovered ? "scale(1.05)" : "scale(1)",
-      }}
-    >
-      <span style={{ fontSize: 22, lineHeight: 1 }}>{icon.emoji}</span>
-      <span style={{
-        fontSize: 9,
-        color: hovered ? "#0f766e" : "#9ca3af",
-        textAlign: "center",
-        lineHeight: 1.2,
-        maxWidth: "100%",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        width: "100%",
-      }}>
-        {icon.name}
-      </span>
-    </button>
+    <Tooltip>
+      <TooltipTrigger render={<span className="inline-flex w-full" />}>
+        <button
+          onClick={() => onSelect(icon)}
+          className="flex flex-col items-center justify-center gap-1 p-1.5 rounded-xl border border-transparent
+            hover:border-primary/40 hover:bg-primary/5 cursor-pointer transition-all hover:scale-105 aspect-square w-full"
+        >
+          <span className="text-xl leading-none">{icon.emoji}</span>
+          <span className="text-[9px] text-muted-foreground text-center leading-tight w-full truncate">
+            {icon.name}
+          </span>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="right">{icon.name}</TooltipContent>
+    </Tooltip>
   );
 }

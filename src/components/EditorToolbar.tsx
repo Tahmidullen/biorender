@@ -2,6 +2,11 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 const COLORS = [
   { hex: "#1f2937", label: "Dark"   },
@@ -38,7 +43,6 @@ export default function EditorToolbar({
 
   function startEditingTitle() {
     setEditingTitle(true);
-    // Focus the input after React re-renders it
     setTimeout(() => titleInputRef.current?.select(), 0);
   }
 
@@ -47,32 +51,20 @@ export default function EditorToolbar({
   }
 
   return (
-    <header style={{
-      height: "56px",
-      minHeight: "56px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 16px",
-      background: "#ffffff",
-      borderBottom: "1px solid #e5e7eb",
-      gap: "12px",
-    }}>
+    <header className="h-14 min-h-14 flex items-center justify-between px-4 bg-white border-b border-gray-200 gap-3">
 
-      {/* ── Left: logo + editable title ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-        <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-          <div style={{
-            width: 28, height: 28, background: "#14b8a6", borderRadius: 8,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontWeight: "bold", color: "#fff", fontSize: 13,
-          }}>B</div>
-          <span style={{ fontWeight: 700, fontSize: 14, color: "#111827" }}>BioRender</span>
+      {/* Left: logo + editable title */}
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <Link href="/dashboard" className="flex items-center gap-2 no-underline">
+          <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">B</span>
+          </div>
+          <span className="font-bold text-sm text-gray-900 hidden sm:block">BioRender</span>
         </Link>
 
-        <span style={{ color: "#d1d5db" }}>|</span>
+        <Separator orientation="vertical" className="h-5" />
 
-        {/* Clicking the title turns it into an input field */}
+        {/* Click title to rename */}
         {editingTitle ? (
           <input
             ref={titleInputRef}
@@ -80,152 +72,115 @@ export default function EditorToolbar({
             onChange={(e) => onTitleChange(e.target.value)}
             onBlur={finishEditingTitle}
             onKeyDown={(e) => e.key === "Enter" && finishEditingTitle()}
-            style={{
-              fontSize: 13, fontWeight: 500, color: "#111827",
-              border: "1px solid #14b8a6", borderRadius: 6,
-              padding: "2px 8px", outline: "none", width: 180,
-            }}
+            className="text-sm font-medium text-gray-900 border border-primary rounded-md px-2 py-0.5 outline-none w-44"
           />
         ) : (
-          <span
-            onClick={startEditingTitle}
-            title="Click to rename"
-            style={{
-              fontSize: 13, color: "#374151", fontWeight: 500,
-              cursor: "text", padding: "2px 4px", borderRadius: 4,
-              border: "1px solid transparent",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#e5e7eb")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "transparent")}
-          >
-            {title}
-          </span>
+          <Tooltip>
+            <TooltipTrigger render={<span className="inline-flex" />}>
+              <span
+                onClick={startEditingTitle}
+                className="text-sm text-gray-700 font-medium cursor-text px-1.5 py-0.5 rounded border border-transparent hover:border-gray-200 transition-colors"
+              >
+                {title}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>Click to rename</TooltipContent>
+          </Tooltip>
         )}
 
         {/* Save status badge */}
-        <span style={{
-          fontSize: 10, padding: "2px 7px", borderRadius: 4, fontWeight: 600,
-          background: isSaved ? "#f0fdf4" : "#f3f4f6",
-          color: isSaved ? "#16a34a" : "#9ca3af",
-          border: `1px solid ${isSaved ? "#bbf7d0" : "#e5e7eb"}`,
-        }}>
-          {isSaving ? "Saving..." : isSaved ? "✓ Saved" : "Unsaved"}
-        </span>
+        <Badge
+          variant={isSaved ? "default" : "secondary"}
+          className={isSaved
+            ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-[10px]"
+            : "text-[10px]"
+          }
+        >
+          {isSaving ? "Saving…" : isSaved ? "✓ Saved" : "Unsaved"}
+        </Badge>
       </div>
 
-      {/* ── Center: tools ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      {/* Center: tools */}
+      <div className="flex items-center gap-1.5 flex-1 justify-center">
 
-        <ToolBtn onClick={onAddText} title="Add text">
+        <Button
+          variant="ghost"
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={onAddText}
+          title="Add a text label"
+          className="text-xs gap-1"
+        >
           𝐓 Text
-        </ToolBtn>
+        </Button>
 
-        <Divider />
+        <Separator orientation="vertical" className="h-5" />
 
         {/* Fill colour swatches */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: "5px",
-          background: "#f9fafb", border: "1px solid #e5e7eb",
-          borderRadius: 8, padding: "5px 10px",
-        }}>
-          <span style={{ fontSize: 11, color: "#9ca3af", fontWeight: 600, marginRight: 2 }}>Fill</span>
+        <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5">
+          <span className="text-[10px] text-muted-foreground font-semibold mr-1">Fill</span>
           {COLORS.map((c) => (
-            <button
-              key={c.hex}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => onColorChange(c.hex)}
-              title={c.label}
-              style={{
-                width: 16, height: 16, borderRadius: "50%",
-                background: c.hex, border: "1.5px solid #d1d5db",
-                cursor: "pointer", padding: 0, transition: "transform 0.1s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.3)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-            />
+            <Tooltip key={c.hex}>
+              <TooltipTrigger render={<span className="inline-flex" />}>
+                <button
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => onColorChange(c.hex)}
+                  title={c.label}
+                  className="w-4 h-4 rounded-full border border-gray-300 cursor-pointer hover:scale-125 transition-transform flex-shrink-0"
+                  style={{ background: c.hex }}
+                />
+              </TooltipTrigger>
+              <TooltipContent>{c.label}</TooltipContent>
+            </Tooltip>
           ))}
         </div>
 
-        <Divider />
+        <Separator orientation="vertical" className="h-5" />
 
-        <ToolBtn onClick={onDelete} title="Delete selected" danger>
+        <Button
+          variant="ghost"
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={onDelete}
+          title="Delete selected object"
+          className="text-xs gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
           🗑 Delete
-        </ToolBtn>
+        </Button>
 
-        <ToolBtn onClick={onClear} title="Clear canvas">
+        <Button
+          variant="ghost"
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={onClear}
+          title="Clear entire canvas"
+          className="text-xs gap-1"
+        >
           ✕ Clear
-        </ToolBtn>
+        </Button>
       </div>
 
-      {/* ── Right: Save + Export ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-        {/* Save to Supabase */}
-        <button
+      {/* Right: Save + Export */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <Button
+          variant={isSaved ? "outline" : "secondary"}
+          size="sm"
           onClick={onSave}
           disabled={isSaving}
-          style={{
-            display: "flex", alignItems: "center", gap: 5,
-            background: isSaved ? "#f0fdf4" : "#f9fafb",
-            color: isSaved ? "#16a34a" : "#374151",
-            border: `1px solid ${isSaved ? "#bbf7d0" : "#e5e7eb"}`,
-            borderRadius: 8, padding: "6px 14px",
-            fontWeight: 600, fontSize: 12, cursor: isSaving ? "default" : "pointer",
-            transition: "all 0.15s", opacity: isSaving ? 0.6 : 1,
-          }}
-          onMouseEnter={(e) => { if (!isSaving) e.currentTarget.style.background = "#f3f4f6"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = isSaved ? "#f0fdf4" : "#f9fafb"; }}
+          title="Save to your dashboard"
+          className={isSaved ? "border-green-200 text-green-700 hover:bg-green-50 text-xs" : "text-xs"}
         >
-          {isSaving ? "⏳ Saving..." : isSaved ? "✓ Saved" : "💾 Save"}
-        </button>
+          {isSaving ? "⏳ Saving…" : isSaved ? "✓ Saved" : "💾 Save"}
+        </Button>
 
-        {/* Export PNG */}
         <button
           onClick={onDownload}
-          style={{
-            display: "flex", alignItems: "center", gap: 6,
-            background: "#14b8a6", color: "#fff",
-            border: "none", borderRadius: 8,
-            padding: "7px 14px", fontWeight: 600, fontSize: 12,
-            cursor: "pointer", transition: "background 0.15s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#0d9488")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#14b8a6")}
+          title="Download as PNG image"
+          className={cn(buttonVariants({ size: "sm" }), "text-xs gap-1")}
         >
           ⬇ Export PNG
         </button>
       </div>
     </header>
   );
-}
-
-function ToolBtn({ onClick, title, children, danger = false }: {
-  onClick: () => void;
-  title: string;
-  children: React.ReactNode;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={onClick}
-      title={title}
-      style={{
-        display: "flex", alignItems: "center", gap: 5,
-        padding: "5px 10px", borderRadius: 8,
-        border: danger ? "1px solid #fecaca" : "1px solid transparent",
-        background: "transparent",
-        color: danger ? "#ef4444" : "#374151",
-        fontSize: 12, fontWeight: 500, cursor: "pointer",
-        transition: "background 0.1s", whiteSpace: "nowrap",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = danger ? "#fef2f2" : "#f3f4f6")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Divider() {
-  return <div style={{ width: 1, height: 24, background: "#e5e7eb", margin: "0 2px" }} />;
 }

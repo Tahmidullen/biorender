@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
 type Figure = {
   id: string;
@@ -54,110 +59,89 @@ export default function DashboardPage() {
     });
   }
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f9fafb" }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{
-            width: 36, height: 36, margin: "0 auto 12px",
-            border: "4px solid #14b8a6", borderTopColor: "transparent",
-            borderRadius: "50%", animation: "spin 0.8s linear infinite",
-          }} />
-          <p style={{ fontSize: 13, color: "#9ca3af" }}>Loading your figures...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ minHeight: "100vh", background: "#f9fafb" }}>
+    <div className="min-h-screen bg-gray-50">
 
-      {/* ── Top bar ── */}
-      <header style={{
-        background: "#fff", borderBottom: "1px solid #e5e7eb",
-        padding: "0 24px", height: 60,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, background: "#14b8a6", borderRadius: 9,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontWeight: "bold", color: "#fff", fontSize: 15,
-          }}>B</div>
-          <span style={{ fontWeight: 800, fontSize: 18, color: "#111827" }}>BioRender</span>
-        </div>
+      {/* Top bar */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 no-underline">
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">B</span>
+            </div>
+            <span className="text-lg font-extrabold text-gray-900">BioRender</span>
+          </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 13, color: "#6b7280" }}>{userEmail}</span>
-          <button
-            onClick={handleLogout}
-            style={{
-              fontSize: 13, color: "#6b7280", background: "none",
-              border: "none", cursor: "pointer", fontWeight: 500,
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#6b7280")}
-          >
-            Log out
-          </button>
+          <div className="flex items-center gap-4">
+            {userEmail && (
+              <span className="text-sm text-muted-foreground hidden sm:block">{userEmail}</span>
+            )}
+            <Button variant="ghost" size="sm" onClick={handleLogout}
+              className="text-muted-foreground hover:text-destructive">
+              Log out
+            </Button>
+          </div>
         </div>
       </header>
 
-      {/* ── Main content ── */}
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px" }}>
+      {/* Main content */}
+      <main className="max-w-6xl mx-auto px-6 py-10">
 
         {/* Page header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", margin: 0 }}>My Figures</h1>
-            <p style={{ fontSize: 14, color: "#6b7280", marginTop: 4 }}>
-              {figures.length} figure{figures.length !== 1 ? "s" : ""} saved
-            </p>
+            <h1 className="text-3xl font-extrabold text-gray-900">My Figures</h1>
+            {!loading && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {figures.length} figure{figures.length !== 1 ? "s" : ""} saved
+              </p>
+            )}
           </div>
-          <Link
-            href="/editor"
-            style={{
-              background: "#14b8a6", color: "#fff", textDecoration: "none",
-              fontWeight: 600, fontSize: 14, padding: "10px 20px",
-              borderRadius: 10, display: "inline-flex", alignItems: "center", gap: 6,
-            }}
-          >
+          <Link href="/editor" className={cn(buttonVariants())}>
             + New Figure
           </Link>
         </div>
 
+        <Separator className="mb-8" />
+
+        {/* Loading skeleton grid */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-36 w-full rounded-none" />
+                <CardContent className="pt-4 pb-2">
+                  <Skeleton className="h-4 w-3/4 mb-2" />
+                  <Skeleton className="h-3 w-1/2" />
+                </CardContent>
+                <CardFooter className="pt-0 pb-4 gap-2">
+                  <Skeleton className="h-8 flex-1" />
+                  <Skeleton className="h-8 w-10" />
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+
         {/* Empty state */}
-        {figures.length === 0 && (
-          <div style={{
-            background: "#fff", border: "2px dashed #e5e7eb", borderRadius: 16,
-            padding: "64px 24px", textAlign: "center",
-          }}>
-            <div style={{ fontSize: 52, marginBottom: 12 }}>🧬</div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
-              No figures yet
-            </h2>
-            <p style={{ fontSize: 14, color: "#9ca3af", marginBottom: 24, maxWidth: 340, margin: "0 auto 24px" }}>
-              Create your first scientific figure using the editor. Click Save in the toolbar to store it here.
+        {!loading && figures.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-5">
+              <span className="text-4xl">🧬</span>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">No figures yet</h2>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+              Create your first scientific figure. Click Save in the editor toolbar to store it here.
             </p>
-            <Link
-              href="/editor"
-              style={{
-                background: "#14b8a6", color: "#fff", textDecoration: "none",
-                fontWeight: 600, fontSize: 14, padding: "10px 24px", borderRadius: 10,
-              }}
-            >
+            <Link href="/editor" className={cn(buttonVariants())}>
               Open Editor
             </Link>
           </div>
         )}
 
         {/* Figures grid */}
-        {figures.length > 0 && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-            gap: 20,
-          }}>
+        {!loading && figures.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {figures.map((fig) => (
               <FigureCard
                 key={fig.id}
@@ -173,7 +157,6 @@ export default function DashboardPage() {
   );
 }
 
-// ── Figure card component ──────────────────────────────────────────────────────
 function FigureCard({
   figure, onDelete, formatDate,
 }: {
@@ -181,81 +164,45 @@ function FigureCard({
   onDelete: (id: string) => void;
   formatDate: (iso: string) => string;
 }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: "#fff",
-        borderRadius: 14,
-        border: `1.5px solid ${hovered ? "#99f6e4" : "#e5e7eb"}`,
-        overflow: "hidden",
-        transition: "all 0.15s",
-        boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.08)" : "0 1px 4px rgba(0,0,0,0.04)",
-        transform: hovered ? "translateY(-2px)" : "none",
-      }}
-    >
+    <Card className="overflow-hidden group hover:shadow-md transition-shadow hover:border-primary/30">
       {/* Preview thumbnail */}
-      <div style={{
-        height: 140, background: "#f3f4f6",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        overflow: "hidden",
-      }}>
+      <div className="h-36 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
         {figure.preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={figure.preview}
             alt={figure.title}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            className="w-full h-full object-contain"
           />
         ) : (
-          <span style={{ fontSize: 36, opacity: 0.3 }}>🧬</span>
+          <span className="text-4xl opacity-25">🧬</span>
         )}
       </div>
 
-      {/* Card body */}
-      <div style={{ padding: "14px 16px" }}>
-        <h3 style={{
-          fontSize: 14, fontWeight: 700, color: "#111827",
-          margin: "0 0 4px", whiteSpace: "nowrap",
-          overflow: "hidden", textOverflow: "ellipsis",
-        }}>
-          {figure.title}
-        </h3>
-        <p style={{ fontSize: 11, color: "#9ca3af", margin: "0 0 14px" }}>
+      <CardContent className="pt-3 pb-2 px-4">
+        <h3 className="text-sm font-bold text-gray-900 truncate">{figure.title}</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">
           Updated {formatDate(figure.updated_at)}
         </p>
+      </CardContent>
 
-        {/* Actions */}
-        <div style={{ display: "flex", gap: 8 }}>
-          <Link
-            href={`/editor?id=${figure.id}`}
-            style={{
-              flex: 1, textAlign: "center", textDecoration: "none",
-              fontSize: 12, fontWeight: 600, color: "#fff",
-              background: "#14b8a6", borderRadius: 8, padding: "6px 0",
-              transition: "background 0.1s",
-            }}
-          >
-            Open
-          </Link>
-          <button
-            onClick={() => onDelete(figure.id)}
-            style={{
-              fontSize: 12, fontWeight: 600, color: "#ef4444",
-              background: "#fef2f2", border: "1px solid #fecaca",
-              borderRadius: 8, padding: "6px 12px", cursor: "pointer",
-              transition: "background 0.1s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#fee2e2")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#fef2f2")}
-          >
-            🗑
-          </button>
-        </div>
-      </div>
-    </div>
+      <CardFooter className="px-4 pb-4 pt-0 gap-2">
+        <Link
+          href={`/editor?id=${figure.id}`}
+          className={cn(buttonVariants({ size: "sm" }), "flex-1 text-center")}
+        >
+          Open
+        </Link>
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-destructive hover:bg-destructive/10 hover:border-destructive/30 px-3"
+          onClick={() => onDelete(figure.id)}
+        >
+          🗑
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
