@@ -2,23 +2,36 @@
 
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import * as fabric from "fabric";
+import type { TemplateOp } from "@/lib/templates";
 
 export type EditorCanvasHandle = {
   addText: () => void;
+  /** Legacy: drop an emoji glyph onto the canvas. Kept for back-compat. */
   addEmoji: (emoji: string, label: string) => void;
+  /** Drop a real SVG asset onto the canvas (vector, scalable, recolourable). */
+  addSvg: (svgString: string, label?: string) => Promise<void>;
   deleteSelected: () => void;
   changeColor: (color: string) => void;
   downloadImage: () => void;
   clearCanvas: () => void;
-  // Phase 5: save & load
   getCanvasData: () => { json: string; preview: string };
   loadFromData: (json: string) => void;
+  /** Replay a list of template operations onto a fresh canvas. */
+  loadTemplate: (ops: TemplateOp[]) => Promise<void>;
+};
+
+type FontFamily = "sans" | "serif" | "mono";
+
+const FAMILY_MAP: Record<FontFamily, string> = {
+  sans:  "var(--font-sans), system-ui, sans-serif",
+  serif: "var(--font-display), ui-serif, Georgia, serif",
+  mono:  "var(--font-mono), ui-monospace, monospace",
 };
 
 const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const canvasRef    = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const fabricRef  = useRef<fabric.Canvas | null>(null);
+  const fabricRef    = useRef<fabric.Canvas | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
@@ -35,8 +48,6 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
 
     fabricRef.current = canvas;
 
-    // Resize the Fabric canvas when the window is resized
-    // Fabric v6+ uses setDimensions instead of setWidth/setHeight
     function handleResize() {
       canvas.setDimensions({
         width:  container.clientWidth,
@@ -52,6 +63,30 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
     };
   }, []);
 
+  async function buildSvgObject(
+    svgString: string,
+    targetSize: number,
+  ): Promise<fabric.Object | null> {
+    const parsed = await fabric.loadSVGFromString(svgString);
+    const objects = (parsed.objects ?? []).filter(
+      (o): o is fabric.Object => o !== null,
+    );
+    if (objects.length === 0) return null;
+
+    const grouped = fabric.util.groupSVGElements(objects, parsed.options);
+
+    const w = grouped.width  ?? targetSize;
+    const h = grouped.height ?? targetSize;
+    const scale = targetSize / Math.max(w, h);
+    grouped.scale(scale);
+    grouped.set({ originX: "center", originY: "center" });
+    return grouped;
+  }
+
+  function fontFor(family?: FontFamily): string {
+    return FAMILY_MAP[family ?? "sans"];
+  }
+
   useImperativeHandle(ref, () => ({
     addText() {
       const canvas = fabricRef.current;
@@ -60,8 +95,8 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
         left: Math.max(40, (canvas.width ?? 400) / 2 - 110),
         top:  Math.max(40, (canvas.height ?? 300) / 2 - 15),
         fontSize: 22,
-        fill: "#1f2937",
-        fontFamily: "sans-serif",
+        fill: "#0f172a",
+        fontFamily: FAMILY_MAP.sans,
       });
       canvas.add(text);
       canvas.setActiveObject(text);
@@ -83,11 +118,41 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
         left: emojiObj.left,
         top:  (emojiObj.top ?? 0) + 64,
         fontSize: 13,
-        fill: "#6b7280",
-        fontFamily: "sans-serif",
+        fill: "#475569",
+        fontFamily: FAMILY_MAP.sans,
       });
       canvas.add(emojiObj, labelObj);
       canvas.setActiveObject(emojiObj);
+      canvas.renderAll();
+    },
+
+    async addSvg(svgString: string, label?: string) {
+      const canvas = fabricRef.current;
+      if (!canvas) return;
+      const W = canvas.width  ?? 900;
+      const H = canvas.height ?? 600;
+
+      const obj = await buildSvgObject(svgString, 110);
+      if (!obj) return;
+
+      const cx = 100 + Math.random() * (W - 200);
+      const cy = 100 + Math.random() * (H - 200);
+      obj.set({ left: cx, top: cy });
+      canvas.add(obj);
+
+      if (label) {
+        const labelObj = new fabric.IText(label, {
+          left: cx, top: cy + 70,
+          originX: "center", originY: "top",
+          fontSize: 13,
+          fontStyle: "italic",
+          fill: "#475569",
+          fontFamily: FAMILY_MAP.serif,
+        });
+        canvas.add(labelObj);
+      }
+
+      canvas.setActiveObject(obj);
       canvas.renderAll();
     },
 
@@ -102,11 +167,9 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
     changeColor(color: string) {
       const canvas = fabricRef.current;
       if (!canvas) return;
-      const selected = canvas.getActiveObjects();
-      selected.forEach((obj) => {
-        obj.set("fill", color);
+      canvas.getActiveObjects().forEach((obj) => {
+        recolourDeep(obj, color);
       });
-      // Force a full re-render so the new colour is visible immediately
       canvas.requestRenderAll();
     },
 
@@ -116,7 +179,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
       const dataUrl = canvas.toDataURL({ format: "png", multiplier: 2 });
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = "biorender-figure.png";
+      a.download = "canvas-figure.png";
       a.click();
     },
 
@@ -128,7 +191,6 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
       canvas.renderAll();
     },
 
-    // Returns the full canvas state as JSON + a small preview image (base64)
     getCanvasData() {
       const canvas = fabricRef.current;
       if (!canvas) return { json: "{}", preview: "" };
@@ -137,13 +199,53 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
       return { json, preview };
     },
 
-    // Restores a canvas from a previously saved JSON string
     loadFromData(json: string) {
       const canvas = fabricRef.current;
       if (!canvas) return;
       canvas.loadFromJSON(JSON.parse(json)).then(() => {
         canvas.renderAll();
       });
+    },
+
+    async loadTemplate(ops: TemplateOp[]) {
+      const canvas = fabricRef.current;
+      if (!canvas) return;
+      canvas.clear();
+      canvas.backgroundColor = "#ffffff";
+
+      const W = canvas.width  ?? 900;
+      const H = canvas.height ?? 600;
+
+      const { lucideToSvg } = await import("@/lib/lucide-svg");
+
+      for (const op of ops) {
+        if (op.kind === "svg") {
+          const svgString = lucideToSvg(op.lucide, {
+            color: op.color ?? "#0f172a",
+            fill:  op.fill ?? "none",
+            size:  op.size ?? 96,
+          });
+          const obj = await buildSvgObject(svgString, op.size ?? 96);
+          if (!obj) continue;
+          obj.set({ left: op.x * W, top: op.y * H });
+          canvas.add(obj);
+        } else {
+          const txt = new fabric.IText(op.text, {
+            left: op.x * W,
+            top:  op.y * H,
+            originX: "center",
+            originY: "center",
+            fontSize: op.fontSize ?? 14,
+            fill: op.color ?? "#0f172a",
+            fontFamily: fontFor(op.family),
+            fontStyle: op.italic ? "italic" : "normal",
+          });
+          canvas.add(txt);
+        }
+      }
+
+      canvas.discardActiveObject();
+      canvas.renderAll();
     },
   }));
 
@@ -156,19 +258,19 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
-        // Subtle dot-grid background so the white canvas looks like it floats
-        background: "#e5e7eb",
+        background: "var(--muted, #f3f4f6)",
         backgroundImage:
-          "radial-gradient(circle, #9ca3af 1px, transparent 1px)",
-        backgroundSize: "24px 24px",
+          "radial-gradient(circle, color-mix(in oklab, var(--ink, #0f172a) 14%, transparent) 1px, transparent 1px)",
+        backgroundSize: "22px 22px",
       }}
     >
       <div
         style={{
-          boxShadow: "0 25px 60px rgba(0,0,0,0.18)",
-          borderRadius: "8px",
+          boxShadow:
+            "0 24px 60px -24px color-mix(in oklab, var(--ink, #0f172a) 30%, transparent)",
+          borderRadius: "10px",
           overflow: "hidden",
-          border: "1px solid #d1d5db",
+          border: "1px solid var(--border, #d1d5db)",
         }}
       >
         <canvas ref={canvasRef} />
@@ -176,6 +278,19 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
     </div>
   );
 });
+
+function recolourDeep(obj: fabric.Object, color: string): void {
+  const asGroup = obj as unknown as { getObjects?: () => fabric.Object[] };
+  if (typeof asGroup.getObjects === "function") {
+    for (const child of asGroup.getObjects()) recolourDeep(child, color);
+    return;
+  }
+  const o = obj as fabric.Object & { stroke?: string | null; fill?: string | null };
+  if (o.stroke !== undefined && o.stroke !== null) o.set("stroke", color);
+  if (o.fill && o.fill !== "transparent" && o.fill !== "none") {
+    o.set("fill", color);
+  }
+}
 
 EditorCanvas.displayName = "EditorCanvas";
 export default EditorCanvas;

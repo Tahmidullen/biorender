@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Plus, Trash2, LogOut, ImageOff, FileText, LayoutTemplate,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/Logo";
 
 type Figure = {
   id: string;
@@ -60,61 +64,83 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
+    <div className="min-h-screen bg-paper-grain">
       {/* Top bar */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 no-underline">
-            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">B</span>
-            </div>
-            <span className="text-lg font-extrabold text-gray-900">BioRender</span>
-          </Link>
-
+      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/75 backdrop-blur-xl">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+          <Logo size="sm" />
           <div className="flex items-center gap-4">
             {userEmail && (
-              <span className="text-sm text-muted-foreground hidden sm:block">{userEmail}</span>
+              <span className="hidden font-mono text-[12px] text-muted-foreground sm:block">
+                {userEmail}
+              </span>
             )}
-            <Button variant="ghost" size="sm" onClick={handleLogout}
-              className="text-muted-foreground hover:text-destructive">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-1.5 text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
               Log out
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="max-w-6xl mx-auto px-6 py-10">
-
+      <main className="mx-auto max-w-6xl px-6 py-12">
         {/* Page header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900">My Figures</h1>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              Workspace
+            </p>
+            <h1 className="font-display text-4xl text-foreground md:text-5xl">
+              Your figures
+            </h1>
             {!loading && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {figures.length} figure{figures.length !== 1 ? "s" : ""} saved
+              <p className="mt-2 text-[14px] text-muted-foreground">
+                {figures.length} figure{figures.length !== 1 ? "s" : ""} in this workspace.
               </p>
             )}
           </div>
-          <Link href="/editor" className={cn(buttonVariants())}>
-            + New Figure
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/templates"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                "h-11 gap-2 px-5 text-[14px]",
+              )}
+            >
+              <LayoutTemplate className="h-4 w-4" />
+              Templates
+            </Link>
+            <Link
+              href="/editor"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "h-11 gap-2 px-5 text-[14px] shadow-[0_10px_24px_-12px_color-mix(in_oklab,var(--primary)_60%,transparent)]",
+              )}
+            >
+              <Plus className="h-4 w-4" />
+              New figure
+            </Link>
+          </div>
         </div>
 
-        <Separator className="mb-8" />
+        <Separator className="my-10" />
 
-        {/* Loading skeleton grid */}
+        {/* Loading skeletons */}
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <Card key={i} className="overflow-hidden">
-                <Skeleton className="h-36 w-full rounded-none" />
+              <Card key={i} className="overflow-hidden border-border/70">
+                <Skeleton className="h-40 w-full rounded-none" />
                 <CardContent className="pt-4 pb-2">
-                  <Skeleton className="h-4 w-3/4 mb-2" />
+                  <Skeleton className="mb-2 h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
                 </CardContent>
-                <CardFooter className="pt-0 pb-4 gap-2">
+                <CardFooter className="gap-2 pt-0 pb-4">
                   <Skeleton className="h-8 flex-1" />
                   <Skeleton className="h-8 w-10" />
                 </CardFooter>
@@ -125,23 +151,37 @@ export default function DashboardPage() {
 
         {/* Empty state */}
         {!loading && figures.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-5">
-              <span className="text-4xl">🧬</span>
+          <div className="surface-elegant hairline mx-auto max-w-md py-16 text-center">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-accent text-primary">
+              <FileText className="h-6 w-6" strokeWidth={1.6} />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">No figures yet</h2>
-            <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-              Create your first scientific figure. Click Save in the editor toolbar to store it here.
+            <h2 className="font-display text-2xl text-foreground">No figures yet</h2>
+            <p className="mx-auto mt-2 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
+              Open the editor to draft your first figure. It will appear here as
+              soon as you save.
             </p>
-            <Link href="/editor" className={cn(buttonVariants())}>
-              Open Editor
-            </Link>
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <Link
+                href="/templates"
+                className={cn(buttonVariants({ size: "lg", variant: "outline" }), "h-11 gap-2 px-5 text-[14px]")}
+              >
+                <LayoutTemplate className="h-4 w-4" />
+                Browse templates
+              </Link>
+              <Link
+                href="/editor"
+                className={cn(buttonVariants({ size: "lg" }), "h-11 gap-2 px-5 text-[14px]")}
+              >
+                <Plus className="h-4 w-4" />
+                Blank canvas
+              </Link>
+            </div>
           </div>
         )}
 
         {/* Figures grid */}
         {!loading && figures.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {figures.map((fig) => (
               <FigureCard
                 key={fig.id}
@@ -165,42 +205,44 @@ function FigureCard({
   formatDate: (iso: string) => string;
 }) {
   return (
-    <Card className="overflow-hidden group hover:shadow-md transition-shadow hover:border-primary/30">
-      {/* Preview thumbnail */}
-      <div className="h-36 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
+    <Card className="group overflow-hidden border-border/70 bg-surface transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-elegant)]">
+      <div className="flex h-40 items-center justify-center overflow-hidden border-b border-border/70 bg-muted/40">
         {figure.preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={figure.preview}
             alt={figure.title}
-            className="w-full h-full object-contain"
+            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
-          <span className="text-4xl opacity-25">🧬</span>
+          <ImageOff className="h-7 w-7 text-muted-foreground/40" strokeWidth={1.4} />
         )}
       </div>
 
-      <CardContent className="pt-3 pb-2 px-4">
-        <h3 className="text-sm font-bold text-gray-900 truncate">{figure.title}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Updated {formatDate(figure.updated_at)}
+      <CardContent className="px-4 pt-3 pb-2">
+        <h3 className="truncate font-display text-[17px] leading-tight text-foreground">
+          {figure.title}
+        </h3>
+        <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+          updated {formatDate(figure.updated_at)}
         </p>
       </CardContent>
 
-      <CardFooter className="px-4 pb-4 pt-0 gap-2">
+      <CardFooter className="gap-2 px-4 pt-0 pb-4">
         <Link
           href={`/editor?id=${figure.id}`}
-          className={cn(buttonVariants({ size: "sm" }), "flex-1 text-center")}
+          className={cn(buttonVariants({ size: "sm" }), "flex-1 text-center text-[12px]")}
         >
           Open
         </Link>
         <Button
           size="sm"
           variant="outline"
-          className="text-destructive hover:bg-destructive/10 hover:border-destructive/30 px-3"
+          aria-label="Delete figure"
+          className="px-3 text-muted-foreground hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
           onClick={() => onDelete(figure.id)}
         >
-          🗑
+          <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </CardFooter>
     </Card>

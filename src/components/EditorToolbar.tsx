@@ -2,22 +2,32 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import {
+  Type as TypeIcon,
+  Trash2,
+  X,
+  Save,
+  Download,
+  Check,
+  Loader2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { Logo } from "@/components/Logo";
 
 const COLORS = [
-  { hex: "#1f2937", label: "Dark"   },
-  { hex: "#ef4444", label: "Red"    },
-  { hex: "#f97316", label: "Orange" },
-  { hex: "#eab308", label: "Yellow" },
-  { hex: "#22c55e", label: "Green"  },
-  { hex: "#3b82f6", label: "Blue"   },
-  { hex: "#8b5cf6", label: "Purple" },
-  { hex: "#ec4899", label: "Pink"   },
-  { hex: "#ffffff", label: "White"  },
+  { hex: "#0f172a", label: "Ink"        },
+  { hex: "#0d9488", label: "Teal"       },
+  { hex: "#2563eb", label: "Blue"       },
+  { hex: "#7c3aed", label: "Violet"     },
+  { hex: "#db2777", label: "Magenta"    },
+  { hex: "#ea580c", label: "Vermilion"  },
+  { hex: "#ca8a04", label: "Ochre"      },
+  { hex: "#16a34a", label: "Verdant"    },
+  { hex: "#ffffff", label: "Paper"      },
 ];
 
 type Props = {
@@ -51,20 +61,15 @@ export default function EditorToolbar({
   }
 
   return (
-    <header className="h-14 min-h-14 flex items-center justify-between px-4 bg-white border-b border-gray-200 gap-3">
-
-      {/* Left: logo + editable title */}
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-2 no-underline">
-          <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">B</span>
-          </div>
-          <span className="font-bold text-sm text-gray-900 hidden sm:block">BioRender</span>
+    <header className="flex h-14 min-h-14 items-center justify-between gap-3 border-b border-border bg-surface px-4">
+      {/* Left: logo + editable title + save status */}
+      <div className="flex shrink-0 items-center gap-3">
+        <Link href="/dashboard">
+          <Logo size="sm" iconOnly />
         </Link>
 
         <Separator orientation="vertical" className="h-5" />
 
-        {/* Click title to rename */}
         {editingTitle ? (
           <input
             ref={titleInputRef}
@@ -72,14 +77,14 @@ export default function EditorToolbar({
             onChange={(e) => onTitleChange(e.target.value)}
             onBlur={finishEditingTitle}
             onKeyDown={(e) => e.key === "Enter" && finishEditingTitle()}
-            className="text-sm font-medium text-gray-900 border border-primary rounded-md px-2 py-0.5 outline-none w-44"
+            className="w-48 rounded-md border border-primary bg-background px-2 py-0.5 font-display text-[15px] text-foreground outline-none"
           />
         ) : (
           <Tooltip>
             <TooltipTrigger render={<span className="inline-flex" />}>
               <span
                 onClick={startEditingTitle}
-                className="text-sm text-gray-700 font-medium cursor-text px-1.5 py-0.5 rounded border border-transparent hover:border-gray-200 transition-colors"
+                className="cursor-text rounded border border-transparent px-1.5 py-0.5 font-display text-[15px] text-foreground transition-colors hover:border-border"
               >
                 {title}
               </span>
@@ -88,37 +93,29 @@ export default function EditorToolbar({
           </Tooltip>
         )}
 
-        {/* Save status badge */}
-        <Badge
-          variant={isSaved ? "default" : "secondary"}
-          className={isSaved
-            ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-[10px]"
-            : "text-[10px]"
-          }
-        >
-          {isSaving ? "Saving…" : isSaved ? "✓ Saved" : "Unsaved"}
-        </Badge>
+        <SaveBadge isSaving={isSaving} isSaved={isSaved} />
       </div>
 
-      {/* Center: tools */}
-      <div className="flex items-center gap-1.5 flex-1 justify-center">
-
+      {/* Centre: tools */}
+      <div className="flex flex-1 items-center justify-center gap-1.5">
         <Button
           variant="ghost"
           size="sm"
           onMouseDown={(e) => e.preventDefault()}
           onClick={onAddText}
           title="Add a text label"
-          className="text-xs gap-1"
+          className="gap-1.5 text-[12px]"
         >
-          𝐓 Text
+          <TypeIcon className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Text
         </Button>
 
         <Separator orientation="vertical" className="h-5" />
 
-        {/* Fill colour swatches */}
-        <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5">
-          <span className="text-[10px] text-muted-foreground font-semibold mr-1">Fill</span>
+        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5">
+          <span className="mr-1 font-mono text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            Fill
+          </span>
           {COLORS.map((c) => (
             <Tooltip key={c.hex}>
               <TooltipTrigger render={<span className="inline-flex" />}>
@@ -126,7 +123,8 @@ export default function EditorToolbar({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => onColorChange(c.hex)}
                   title={c.label}
-                  className="w-4 h-4 rounded-full border border-gray-300 cursor-pointer hover:scale-125 transition-transform flex-shrink-0"
+                  aria-label={`Fill ${c.label}`}
+                  className="h-4 w-4 shrink-0 cursor-pointer rounded-full border border-border transition-transform hover:scale-125"
                   style={{ background: c.hex }}
                 />
               </TooltipTrigger>
@@ -143,9 +141,10 @@ export default function EditorToolbar({
           onMouseDown={(e) => e.preventDefault()}
           onClick={onDelete}
           title="Delete selected object"
-          className="text-xs gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+          className="gap-1.5 text-[12px] text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
-          🗑 Delete
+          <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Delete
         </Button>
 
         <Button
@@ -154,33 +153,72 @@ export default function EditorToolbar({
           onMouseDown={(e) => e.preventDefault()}
           onClick={onClear}
           title="Clear entire canvas"
-          className="text-xs gap-1"
+          className="gap-1.5 text-[12px]"
         >
-          ✕ Clear
+          <X className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Clear
         </Button>
       </div>
 
       {/* Right: Save + Export */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex shrink-0 items-center gap-2">
         <Button
           variant={isSaved ? "outline" : "secondary"}
           size="sm"
           onClick={onSave}
           disabled={isSaving}
           title="Save to your dashboard"
-          className={isSaved ? "border-green-200 text-green-700 hover:bg-green-50 text-xs" : "text-xs"}
+          className={cn(
+            "gap-1.5 text-[12px]",
+            isSaved && "border-primary/30 bg-accent/40 text-primary hover:bg-accent",
+          )}
         >
-          {isSaving ? "⏳ Saving…" : isSaved ? "✓ Saved" : "💾 Save"}
+          {isSaving ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={1.8} />
+          ) : isSaved ? (
+            <Check className="h-3.5 w-3.5" strokeWidth={2} />
+          ) : (
+            <Save className="h-3.5 w-3.5" strokeWidth={1.8} />
+          )}
+          {isSaving ? "Saving" : isSaved ? "Saved" : "Save"}
         </Button>
 
         <button
           onClick={onDownload}
           title="Download as PNG image"
-          className={cn(buttonVariants({ size: "sm" }), "text-xs gap-1")}
+          className={cn(buttonVariants({ size: "sm" }), "gap-1.5 text-[12px]")}
         >
-          ⬇ Export PNG
+          <Download className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Export PNG
         </button>
       </div>
     </header>
+  );
+}
+
+function SaveBadge({ isSaving, isSaved }: { isSaving: boolean; isSaved: boolean }) {
+  if (isSaving) {
+    return (
+      <Badge variant="secondary" className="gap-1 font-mono text-[10px]">
+        <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1.8} />
+        saving
+      </Badge>
+    );
+  }
+  if (isSaved) {
+    return (
+      <Badge
+        variant="secondary"
+        className="gap-1 border-primary/20 bg-accent/60 font-mono text-[10px] text-primary"
+      >
+        <Check className="h-3 w-3" strokeWidth={2} />
+        saved
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="secondary" className="font-mono text-[10px]">
+      unsaved
+    </Badge>
   );
 }

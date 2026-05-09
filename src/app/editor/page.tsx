@@ -3,35 +3,30 @@
 import { useRef, useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
 import EditorToolbar from "@/components/EditorToolbar";
 import AssetLibrary from "@/components/AssetLibrary";
 import type { EditorCanvasHandle } from "@/components/EditorCanvas";
 import type { IconAsset } from "@/lib/assets";
+import { findTemplate } from "@/lib/templates";
+import { lucideToSvg } from "@/lib/lucide-svg";
 import { supabase } from "@/lib/supabase";
 
 const EditorCanvas = dynamic(() => import("@/components/EditorCanvas"), {
   ssr: false,
   loading: () => (
-    <div style={{
-      flex: 1, display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", gap: 12,
-      background: "#f3f4f6",
-    }}>
-      <div style={{
-        width: 32, height: 32,
-        border: "4px solid #14b8a6", borderTopColor: "transparent",
-        borderRadius: "50%", animation: "spin 0.8s linear infinite",
-      }} />
-      <p style={{ fontSize: 13, color: "#9ca3af" }}>Loading canvas...</p>
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-muted/40">
+      <Loader2 className="h-7 w-7 animate-spin text-primary" strokeWidth={1.6} />
+      <p className="font-mono text-[12px] text-muted-foreground">Preparing canvas…</p>
     </div>
   ),
 });
 
-// useSearchParams must be inside a Suspense boundary in Next.js App Router
 function EditorPageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const figureId     = searchParams.get("id"); // present when opening a saved figure
+  const figureId     = searchParams.get("id");
+  const templateId   = searchParams.get("template");
 
   const canvasRef = useRef<EditorCanvasHandle>(null);
 
@@ -40,7 +35,6 @@ function EditorPageInner() {
   const [isSaved,  setIsSaved]  = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(figureId);
 
-  // When the page loads with ?id=xxx, load that figure from Supabase
   useEffect(() => {
     if (!figureId) return;
 
@@ -59,7 +53,6 @@ function EditorPageInner() {
       setTitle(data.title);
       setCurrentId(figureId);
 
-      // Wait a moment for the Fabric canvas to fully mount before loading data
       setTimeout(() => {
         canvasRef.current?.loadFromData(data.canvas_json);
         setIsSaved(true);
@@ -69,7 +62,20 @@ function EditorPageInner() {
     loadFigure();
   }, [figureId]);
 
-  // When title changes, mark it as unsaved
+  useEffect(() => {
+    if (figureId || !templateId) return;
+    const tpl = findTemplate(templateId);
+    if (!tpl) return;
+
+    setTitle(tpl.defaultTitle);
+    setIsSaved(false);
+
+    const timer = setTimeout(() => {
+      canvasRef.current?.loadTemplate(tpl.ops);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [templateId, figureId]);
+
   function handleTitleChange(newTitle: string) {
     setTitle(newTitle);
     setIsSaved(false);
@@ -78,7 +84,6 @@ function EditorPageInner() {
   async function handleSave() {
     setIsSaving(true);
 
-    // Get the current canvas state: JSON data + a small preview image
     const canvasData = canvasRef.current?.getCanvasData();
     if (!canvasData) { setIsSaving(false); return; }
 
@@ -99,10 +104,8 @@ function EditorPageInner() {
     let savedId = currentId;
 
     if (currentId) {
-      // Update the existing row
       await supabase.from("figures").update(payload).eq("id", currentId);
     } else {
-      // Insert a brand new row and get back its id
       const { data } = await supabase
         .from("figures")
         .insert(payload)
@@ -110,7 +113,6 @@ function EditorPageInner() {
         .single();
       savedId = data?.id ?? null;
 
-      // Update the URL so refreshing keeps the same figure
       if (savedId) {
         router.replace(`/editor?id=${savedId}`);
         setCurrentId(savedId);
@@ -122,8 +124,9 @@ function EditorPageInner() {
   }
 
   function handleIconClick(icon: IconAsset) {
-    canvasRef.current?.addEmoji(icon.emoji, icon.name);
-    setIsSaved(false); // canvas changed — mark unsaved
+    const svg = lucideToSvg(icon.lucide, { color: "#0f172a" });
+    canvasRef.current?.addSvg(svg, icon.name);
+    setIsSaved(false);
   }
 
   return (
@@ -149,7 +152,6 @@ function EditorPageInner() {
   );
 }
 
-// Wrap in Suspense because useSearchParams() requires it in Next.js App Router
 export default function EditorPage() {
   return (
     <Suspense>
