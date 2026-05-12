@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { EnvironmentalAtmosphere } from "@/components/EnvironmentalAtmosphere";
+import { MotionPreferenceProvider } from "@/components/MotionPreference";
+import { ReducedMotionToggle } from "@/components/ReducedMotionToggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,8 +42,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
-        <TooltipProvider>{children}</TooltipProvider>
+      <body className="min-h-full flex flex-col bg-transparent font-sans text-foreground">
+        <MotionPreferenceProvider>
+          <EnvironmentalAtmosphere />
+          <TooltipProvider>
+            <div className="relative z-[1] min-h-full flex flex-col">{children}</div>
+            <ReducedMotionToggle />
+          </TooltipProvider>
+        </MotionPreferenceProvider>
         <Analytics />
       </body>
     </html>

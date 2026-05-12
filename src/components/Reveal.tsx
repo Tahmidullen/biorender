@@ -8,6 +8,7 @@
 // read as a generic Framer Motion flourish.
 
 import { motion } from "motion/react";
+import { useEffectiveReducedMotion } from "@/components/MotionPreference";
 
 type Props = {
   children: React.ReactNode;
@@ -17,6 +18,12 @@ type Props = {
 };
 
 export function Reveal({ children, delay = 0, className }: Props) {
+  const reduced = useEffectiveReducedMotion();
+
+  if (reduced) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}

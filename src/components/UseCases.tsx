@@ -9,8 +9,7 @@
 // The artwork is unchanged from the previous version — it's already
 // considered. What changed is the chrome: no rounded cards, no
 // hover-lift, no rounded icon-chips, no ambient gradient panel. Instead:
-// a 2-column hairline grid, numbered entries, monospace examples set
-// like a typesetter's running list.
+// a 2-column hairline grid with monospace examples set like a typesetter's running list.
 
 import { BookOpen, LayoutPanelTop, Presentation, FileText } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
@@ -122,7 +121,6 @@ function GrantDoc() {
 const CASES: {
   Icon: typeof BookOpen;
   Art: React.ComponentType;
-  n: string;
   title: string;
   body: string;
   examples: string;
@@ -130,7 +128,6 @@ const CASES: {
   {
     Icon: BookOpen,
     Art: JournalCover,
-    n: "01",
     title: "Peer-reviewed publications",
     body: "Vector geometry is preserved end-to-end. Submit through PubMed-indexed pipelines without re-rendering, re-sizing, or re-flattening anything.",
     examples: "Nature · Cell · Science · eLife · PNAS",
@@ -138,7 +135,6 @@ const CASES: {
   {
     Icon: LayoutPanelTop,
     Art: Poster,
-    n: "02",
     title: "Conference posters",
     body: "Scale a single SVG to A0 — every shape stays crisp and every label stays readable from across the hall.",
     examples: "ASCB · SfN · ESHG · Posters & abstracts",
@@ -146,7 +142,6 @@ const CASES: {
   {
     Icon: Presentation,
     Art: Slide,
-    n: "03",
     title: "Lab presentations",
     body: "Drop figures straight into Keynote, Slides, or PowerPoint. They keep their typography and stay crisp at any zoom.",
     examples: "Lab meetings · Symposia · Keynotes",
@@ -154,7 +149,6 @@ const CASES: {
   {
     Icon: FileText,
     Art: GrantDoc,
-    n: "04",
     title: "Grant applications",
     body: "Reviewers skim hundreds of proposals — a clear, considered figure is the fastest way to make yours stick.",
     examples: "NIH · ERC · Wellcome · NSF",
@@ -169,7 +163,6 @@ export function UseCases() {
         <Reveal>
           <div className="grid grid-cols-12 gap-x-6 items-end pb-8 hairline-b">
             <div className="col-span-12 md:col-span-8">
-              <p className="meta-mono mb-3">§ 03 — Use cases</p>
               <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
                 A figure is only as good as
                 <br />
@@ -184,10 +177,10 @@ export function UseCases() {
           </div>
         </Reveal>
 
-        {/* Flat hairline grid. Two columns, each cell with its own
-            illustration plate, numbered & captioned like a figure index. */}
+            {/* Flat hairline grid. Two columns, each cell with its own
+                illustration plate and caption. */}
         <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2 hairline-box">
-          {CASES.map(({ Icon, Art, n, title, body, examples }, i) => (
+          {CASES.map(({ Icon, Art, title, body, examples }, i) => (
             <Reveal key={title} delay={i * 0.06}>
               <article className="group flex h-full flex-col bg-background">
                 {/* Plate */}
@@ -195,17 +188,11 @@ export function UseCases() {
                   <div className="h-full w-48">
                     <Art />
                   </div>
-                  <span className="absolute left-3 top-3 colophon tnum">
-                    Pl. {n}
-                  </span>
                 </div>
 
                 {/* Body */}
                 <div className="flex flex-1 flex-col gap-3 p-6">
-                  <div className="flex items-baseline gap-3">
-                    <span className="index-num tnum">№ {n}</span>
-                    <Icon className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
-                  </div>
+                  <Icon className="h-4 w-4 shrink-0 text-foreground/70" strokeWidth={1.5} />
                   <h3 className="font-display text-[24px] leading-tight text-foreground md:text-[28px]">
                     {title}
                   </h3>

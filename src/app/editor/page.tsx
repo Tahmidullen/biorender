@@ -10,6 +10,7 @@ import type { EditorCanvasHandle } from "@/components/EditorCanvas";
 import type { IconAsset } from "@/lib/assets";
 import { findTemplate } from "@/lib/templates";
 import { lucideToSvg } from "@/lib/lucide-svg";
+import { scienceSymbolToSvg } from "@/lib/science-symbols";
 import { supabase } from "@/lib/supabase";
 
 const EditorCanvas = dynamic(() => import("@/components/EditorCanvas"), {
@@ -124,7 +125,9 @@ function EditorPageInner() {
   }
 
   function handleIconClick(icon: IconAsset) {
-    const svg = lucideToSvg(icon.lucide, { color: "#0f172a" });
+    const svg = icon.scienceSymbol
+      ? scienceSymbolToSvg(icon.scienceSymbol, { color: "#0f172a", size: 96 })
+      : lucideToSvg(icon.lucide, { color: "#0f172a" });
     canvasRef.current?.addSvg(svg, icon.name);
     setIsSaved(false);
   }

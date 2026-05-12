@@ -4,6 +4,24 @@ import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import * as fabric from "fabric";
 import type { TemplateOp } from "@/lib/templates";
 
+function createDotPattern(): fabric.Pattern {
+  const d = 22;
+  const el = document.createElement("canvas");
+  el.width = d;
+  el.height = d;
+  const ctx = el.getContext("2d");
+  if (!ctx) {
+    return new fabric.Pattern({ source: el, repeat: "repeat" });
+  }
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, d, d);
+  ctx.fillStyle = "rgba(15, 23, 42, 0.11)";
+  ctx.beginPath();
+  ctx.arc(d / 2, d / 2, 1.1, 0, Math.PI * 2);
+  ctx.fill();
+  return new fabric.Pattern({ source: el, repeat: "repeat" });
+}
+
 export type EditorCanvasHandle = {
   addText: () => void;
   /** Legacy: drop an emoji glyph onto the canvas. Kept for back-compat. */
@@ -43,7 +61,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
     const canvas = new fabric.Canvas(canvasRef.current, {
       width: W,
       height: H,
-      backgroundColor: "#ffffff",
+      backgroundColor: createDotPattern(),
     });
 
     fabricRef.current = canvas;
@@ -187,7 +205,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
       canvas.clear();
-      canvas.backgroundColor = "#ffffff";
+      canvas.backgroundColor = createDotPattern();
       canvas.renderAll();
     },
 
@@ -211,21 +229,30 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
       canvas.clear();
-      canvas.backgroundColor = "#ffffff";
+      canvas.backgroundColor = createDotPattern();
 
       const W = canvas.width  ?? 900;
       const H = canvas.height ?? 600;
 
       const { lucideToSvg } = await import("@/lib/lucide-svg");
+      const { scienceSymbolToSvg } = await import("@/lib/science-symbols");
 
       for (const op of ops) {
         if (op.kind === "svg") {
-          const svgString = lucideToSvg(op.lucide, {
-            color: op.color ?? "#0f172a",
-            fill:  op.fill ?? "none",
-            size:  op.size ?? 96,
-          });
-          const obj = await buildSvgObject(svgString, op.size ?? 96);
+          const color = op.color ?? "#0f172a";
+          const size = op.size ?? 96;
+          const svgString =
+            op.scienceSymbol != null
+              ? scienceSymbolToSvg(op.scienceSymbol, { color, size })
+              : op.lucide != null
+                ? lucideToSvg(op.lucide, {
+                    color,
+                    fill: op.fill ?? "none",
+                    size,
+                  })
+                : null;
+          if (!svgString) continue;
+          const obj = await buildSvgObject(svgString, size);
           if (!obj) continue;
           obj.set({ left: op.x * W, top: op.y * H });
           canvas.add(obj);

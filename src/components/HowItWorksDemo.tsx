@@ -19,6 +19,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "motion/react";
+import { useEffectiveReducedMotion } from "@/components/MotionPreference";
 
 // ── Choreography ───────────────────────────────────────────────────────────
 
@@ -45,13 +46,13 @@ const PHASE_LABELS = [
 // it triggers the click-pulse ring around the cursor tip.
 const CURSOR: { x: number; y: number; click?: boolean }[] = [
   { x: 480, y: 250 },                    // 0  idle
-  { x: 36,  y: 92,  click: true },       // 1  hover Cell library item
+  { x: 36,  y: 86,  click: true },       // 1  hover Cell library item
   { x: 500, y: 260, click: true },       // 2  drop cell at canvas centre
-  { x: 36,  y: 128, click: true },       // 3  hover Receptor library item
+  { x: 36,  y: 122, click: true },       // 3  hover Receptor library item
   { x: 610, y: 158, click: true },       // 4  anchor receptor on membrane
-  { x: 36,  y: 164, click: true },       // 5  hover Ligand library item
+  { x: 36,  y: 158, click: true },       // 5  hover Ligand library item
   { x: 610, y: 122, click: true },       // 6  drop ligand into binding pocket
-  { x: 36,  y: 248, click: true },       // 7  hover Text tool
+  { x: 36,  y: 242, click: true },       // 7  hover Text tool
   { x: 700, y: 158, click: true },       // 8  type receptor label
   { x: 700, y: 124, click: true },       // 9  type ligand label
   { x: 738, y: 22,  click: true },       // 10 hit Export button
@@ -61,15 +62,24 @@ export function HowItWorksDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.3 });
   const [phase, setPhase] = useState(0);
+  const reduced = useEffectiveReducedMotion();
 
-  // Advance phases on a fixed cadence — only while in view.
   useEffect(() => {
-    if (!inView) return;
+    if (reduced) {
+      setPhase(TOTAL_PHASES - 1);
+    } else {
+      setPhase(0);
+    }
+  }, [reduced]);
+
+  // Advance phases on a fixed cadence — only while in view and motion is allowed.
+  useEffect(() => {
+    if (!inView || reduced) return;
     const id = setInterval(() => {
       setPhase((p) => (p + 1) % TOTAL_PHASES);
     }, PHASE_DURATION_MS);
     return () => clearInterval(id);
-  }, [inView]);
+  }, [inView, reduced]);
 
   // Visibility flags. Each shape stays placed once the cursor has put it
   // there (>=N) and disappears at phase 0 again on loop.
@@ -142,13 +152,13 @@ export function HowItWorksDemo() {
           </text>
 
           <LibraryItem y={86}  label="Cell"     active={phase === 1}>
-            <CellIcon cx={28} cy={92} />
+            <CellIcon cx={28} cy={86} />
           </LibraryItem>
           <LibraryItem y={122} label="Receptor" active={phase === 3}>
-            <ReceptorIcon cx={28} cy={128} />
+            <ReceptorIcon cx={28} cy={122} />
           </LibraryItem>
           <LibraryItem y={158} label="Ligand"   active={phase === 5}>
-            <LigandIcon cx={28} cy={164} />
+            <LigandIcon cx={28} cy={158} />
           </LibraryItem>
 
           <text
@@ -160,7 +170,7 @@ export function HowItWorksDemo() {
           </text>
 
           <LibraryItem y={242} label="Text" active={phase === 7}>
-            <TextIcon cx={28} cy={248} />
+            <TextIcon cx={28} cy={242} />
           </LibraryItem>
 
           {/* ─── Canvas background ─────────────────────────────────── */}
@@ -378,23 +388,25 @@ function LibraryItem({
 }) {
   return (
     <g>
+      {/* Motion can interpolate rgba but not color-mix() expressions, so
+          we feed the primary teal as a literal rgba here. These map to
+          --primary at 18% / 50% alpha respectively. */}
       <motion.rect
         x={12} y={y - 14} width={176} height={28} rx={5}
         initial={false}
         animate={{
-          fill: active
-            ? "color-mix(in oklab, var(--primary) 18%, transparent)"
-            : "rgba(0,0,0,0)",
-          stroke: active
-            ? "color-mix(in oklab, var(--primary) 50%, transparent)"
-            : "rgba(0,0,0,0)",
+          fill:   active ? "rgba(58, 109, 124, 0.18)" : "rgba(58, 109, 124, 0)",
+          stroke: active ? "rgba(58, 109, 124, 0.50)" : "rgba(58, 109, 124, 0)",
         }}
         transition={{ duration: 0.25 }}
         strokeWidth={1}
       />
       {children}
       <text
-        x={50} y={y + 4}
+        x={50}
+        y={y}
+        dy=".35em"
+        dominantBaseline="middle"
         className="fill-foreground"
         style={{ font: "12px var(--font-sans), system-ui" }}
       >
@@ -442,7 +454,11 @@ function LigandIcon({ cx, cy }: { cx: number; cy: number }) {
 function TextIcon({ cx, cy }: { cx: number; cy: number }) {
   return (
     <text
-      x={cx} y={cy + 5} textAnchor="middle"
+      x={cx}
+      y={cy}
+      dy=".35em"
+      textAnchor="middle"
+      dominantBaseline="middle"
       className="fill-foreground"
       style={{ font: "bold 14px var(--font-display, serif)" }}
     >

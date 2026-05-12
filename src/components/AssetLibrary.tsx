@@ -4,6 +4,7 @@ import { useState } from "react";
 import * as Lucide from "lucide-react";
 import { Search } from "lucide-react";
 import { ICONS, ICON_CATEGORIES, type IconAsset, type LucideName } from "@/lib/assets";
+import { scienceSymbolDataUrl } from "@/lib/science-symbols";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -15,11 +16,13 @@ type Props = {
 };
 
 const CATEGORY_ICONS: Record<string, LucideName> = {
-  "Cell Biology":  "CircleDot",
-  "Microbiology":  "Bug",
-  "Lab Equipment": "FlaskConical",
-  "Molecules":     "Dna",
-  "Processes":     "ArrowRight",
+  "Cell Biology":           "CircleDot",
+  "Microbiology":           "Bug",
+  "Lab Equipment":          "FlaskConical",
+  "Molecules & chemistry":  "Dna",
+  "Organs & models":        "Brain",
+  "Data & documentation":   "BarChart3",
+  "Processes":              "ArrowRight",
 };
 
 function getLucide(name: LucideName) {
@@ -28,7 +31,7 @@ function getLucide(name: LucideName) {
 }
 
 export default function AssetLibrary({ onSelectIcon }: Props) {
-  const [activeCategory, setActiveCategory] = useState<string>("Cell Biology");
+  const [activeCategory, setActiveCategory] = useState<(typeof ICON_CATEGORIES)[number]>("Cell Biology");
   const [search, setSearch] = useState("");
 
   const filteredIcons = ICONS.filter((icon) => {
@@ -118,6 +121,9 @@ export default function AssetLibrary({ onSelectIcon }: Props) {
 
 function IconButton({ icon, onSelect }: { icon: IconAsset; onSelect: (i: IconAsset) => void }) {
   const Icon = getLucide(icon.lucide);
+  const sciSrc = icon.scienceSymbol
+    ? scienceSymbolDataUrl(icon.scienceSymbol, { color: "#334155", size: 72 })
+    : null;
   return (
     <Tooltip>
       <TooltipTrigger render={<span className="inline-flex w-full" />}>
@@ -129,7 +135,15 @@ function IconButton({ icon, onSelect }: { icon: IconAsset; onSelect: (i: IconAss
             "hover:border-border hover:bg-accent/40 hover:text-foreground",
           )}
         >
-          <Icon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" strokeWidth={1.6} />
+          {sciSrc ? (
+            <img
+              src={sciSrc}
+              alt=""
+              className="h-[18px] w-[18px] shrink-0 transition-transform group-hover:scale-110"
+            />
+          ) : (
+            <Icon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" strokeWidth={1.6} />
+          )}
           <span className="w-full truncate text-center text-[9px] font-medium leading-tight text-muted-foreground">
             {icon.name}
           </span>

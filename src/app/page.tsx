@@ -3,10 +3,6 @@ import {
   ArrowRight,
   MousePointer2,
   Atom,
-  FileDown,
-  Cloud,
-  LayoutTemplate,
-  Wand2,
   Hexagon,
   Dna,
   Microscope,
@@ -19,6 +15,9 @@ import { Logo } from "@/components/Logo";
 import { HowItWorksDemo } from "@/components/HowItWorksDemo";
 import { UseCases } from "@/components/UseCases";
 import { Reveal } from "@/components/Reveal";
+import { RegisterMarks } from "@/components/RegisterMarks";
+import { FeaturesShowcase } from "@/components/FeaturesShowcase";
+import { ScrollMorphShowcase } from "@/components/ScrollMorphShowcase";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Canvas.bio — landing page, edition 02.
@@ -36,67 +35,52 @@ import { Reveal } from "@/components/Reveal";
 function Masthead() {
   // Pricing was removed (no plans yet). Community is the curated
   // user-submitted gallery at /community.
-  const links: { href: string; label: string; n: string; external?: boolean }[] = [
-    { href: "#features",     label: "Features",  n: "01" },
-    { href: "#how-it-works", label: "Workflow",  n: "02" },
-    { href: "/templates",    label: "Templates", n: "03", external: true },
-    { href: "/community",    label: "Community", n: "04", external: true },
+  const links: { href: string; label: string; external?: boolean }[] = [
+    { href: "#showcase",    label: "Examples"  },
+    { href: "#features",    label: "Features"  },
+    { href: "#how-it-works", label: "Workflow"  },
+    { href: "/templates",    label: "Templates", external: true },
+    { href: "/community",    label: "Community", external: true },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-paper-grain hairline-b">
-      {/* Issue line — a typesetter's slug at the very top edge. */}
-      <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 pt-3 pb-2 colophon">
-        <span>Issue 02 — Spring / 2026</span>
-        <span className="hidden sm:inline tnum">№ 0001</span>
-      </div>
+    <header className="sticky top-0 z-50 w-full bg-paper-grain-scrim hairline-b">
+      <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-6 py-4">
+        <Logo size="md" />
 
-      <div className="hairline-t">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-6 py-3.5">
-          <Logo size="md" />
+        <nav className="hidden items-center gap-7 md:flex">
+          {links.map((l) => {
+            const className =
+              "text-[13px] text-foreground/80 transition-colors hover:text-foreground border-b border-transparent hover:border-foreground pb-0.5";
+            return l.external ? (
+              <Link key={l.href} href={l.href} className={className}>
+                {l.label}
+              </Link>
+            ) : (
+              <a key={l.href} href={l.href} className={className}>
+                {l.label}
+              </a>
+            );
+          })}
+        </nav>
 
-          <nav className="hidden items-center gap-8 md:flex">
-            {links.map((l) => {
-              const className =
-                "group inline-flex items-baseline gap-1.5 text-[13px] text-foreground";
-              const content = (
-                <>
-                  <span className="index-num tnum">{l.n}</span>
-                  <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-foreground">
-                    {l.label}
-                  </span>
-                </>
-              );
-              return l.external ? (
-                <Link key={l.href} href={l.href} className={className}>
-                  {content}
-                </Link>
-              ) : (
-                <a key={l.href} href={l.href} className={className}>
-                  {content}
-                </a>
-              );
-            })}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className={cn(
-                buttonVariants({ size: "sm" }),
-                "h-8 rounded-sm gap-1.5 px-3 text-[12.5px]",
-              )}
-            >
-              Open editor
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/signup"
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "h-8 rounded-sm gap-1.5 px-3 text-[12.5px]",
+            )}
+          >
+            Open editor
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
     </header>
@@ -106,92 +90,59 @@ function Masthead() {
 // ─── Opening spread (hero) ────────────────────────────────────────────────────
 function OpeningSpread() {
   return (
-    <section className="relative px-6 pt-16 pb-24 sm:pt-24">
-      <div className="mx-auto grid max-w-[1240px] grid-cols-12 gap-x-6">
-        {/* Left — a small editorial dateline + the title slab. */}
-        <div className="col-span-12 lg:col-span-8">
-          <p className="meta-mono mb-10">
-            <span className="ink-stamp">✱</span>{" "}
-            Folio I &nbsp;·&nbsp; A studio for scientific figures
-          </p>
+    <section className="relative px-6 pt-20 pb-24 sm:pt-28">
+      <div className="mx-auto max-w-[1240px]">
+        {/* Title slab — breathes full-width now that the marginalia
+            sidebar is gone. */}
+        <h1 className="font-display text-[12vw] leading-[0.92] tracking-[-0.025em] text-foreground sm:text-[96px] md:text-[120px] lg:text-[140px]">
+          Beautiful
+          <br />
+          <span className="italic font-normal text-primary">science</span> figures,
+          <br />
+          drafted by hand.
+        </h1>
 
-          <h1 className="font-display text-[12vw] leading-[0.92] tracking-[-0.025em] text-foreground sm:text-[88px] md:text-[104px] lg:text-[120px]">
-            Beautiful
-            <br />
-            <span className="italic font-normal text-primary">science</span> figures,
-            <br />
-            drafted by hand.
-          </h1>
+        {/* Animated rule — runs once on load, like a scanner line. */}
+        <div className="mt-12 h-px w-full max-w-[640px] origin-left bg-foreground/80 animate-rule-sweep" />
 
-          {/* The animated rule — runs once on load, like a scanner line. */}
-          <div className="mt-12 h-px w-full max-w-[640px] origin-left bg-foreground/80 animate-rule-sweep" />
-
-          {/* Lead paragraph — set in a narrow column, like a magazine intro. */}
-          <p className="mt-10 max-w-[58ch] text-pretty text-[17px] leading-[1.55] text-foreground/85">
-            A focused editor with a vetted library of scientifically accurate
-            shapes — built for researchers who care how their work looks on
+        <div className="mt-10 grid grid-cols-12 gap-x-6">
+          {/* Lead paragraph — set in a narrow column. */}
+          <p className="col-span-12 max-w-[58ch] text-pretty text-[17px] leading-[1.55] text-foreground/85 md:col-span-8">
+            A focused editor with a growing library of clear, publication-style
+            schematic symbols — built for researchers who care how their work looks on
             the page. Drag, snap, label, ship. The figure should not be the
             thing that holds the paper up.
           </p>
-
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link
-              href="/signup"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-11 rounded-sm px-5 text-[14px] gap-2",
-              )}
-            >
-              Open the editor
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href="#how-it-works"
-              className="group inline-flex items-center gap-2 text-[14px] text-foreground"
-            >
-              <span className="underline-rule">See how it works</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-            </a>
-          </div>
         </div>
 
-        {/* Right — running marginalia, like a printed magazine's sidebar. */}
-        <aside className="col-span-12 mt-16 lg:col-span-4 lg:mt-2 lg:pl-10 lg:hairline-l">
-          <p className="meta-mono mb-4">In this issue</p>
-          <ol className="space-y-3 text-[13px] tnum">
-            {[
-              ["01", "Direct manipulation", "#features"],
-              ["02", "Vetted shape library", "#features"],
-              ["03", "Publication exports", "#features"],
-              ["04", "The workflow, animated", "#how-it-works"],
-              ["05", "Where figures land", "#"],
-              ["06", "Community templates", "/community"],
-            ].map(([n, label, href]) => (
-              <li key={n} className="flex items-baseline gap-3">
-                <span className="index-num">{n}</span>
-                <a
-                  href={href}
-                  className="text-foreground/80 transition-colors hover:text-foreground"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ol>
-
-          <p className="meta-mono mt-12 mb-3">Editor&apos;s note</p>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Drafted by a researcher who sat through one too many ugly
-            conference posters. <span className="italic">— ed.</span>
-          </p>
-        </aside>
+        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link
+            href="/signup"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "h-11 rounded-sm px-5 text-[14px] gap-2",
+            )}
+          >
+            Open the editor
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <a
+            href="#how-it-works"
+            className="group inline-flex items-center gap-2 text-[14px] text-foreground"
+          >
+            <span className="underline-rule">See how it works</span>
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </a>
+        </div>
       </div>
 
-      {/* Figure plate — the PCR amplification diagram, captioned like a
-          printed scientific figure. */}
+      {/* Figure plate — PCR amplification diagram (Fig. 01). */}
       <div className="mx-auto mt-24 max-w-[1240px]">
         <figure>
-          <EditorMockup />
+          <div className="relative">
+            <EditorMockup />
+            <RegisterMarks size={11} inset={8} />
+          </div>
           <figcaption className="mt-3 flex items-baseline justify-between border-t border-border pt-2 colophon">
             <span>Fig. 01 &nbsp;·&nbsp; PCR amplification, drafted in colour</span>
             <span className="hidden sm:inline">
@@ -344,87 +295,17 @@ function EditorMockup() {
   );
 }
 
-// ─── Index of features ────────────────────────────────────────────────────────
-const features = [
-  { Icon: MousePointer2, n: "01", title: "Direct manipulation",  body: "A precise canvas with snapping, alignment, and pixel-perfect handles. No menus to hunt through." },
-  { Icon: Atom,          n: "02", title: "Seven thousand shapes", body: "Cell biology, microbiology, lab apparatus, signalling — all drawn to a consistent visual language." },
-  { Icon: FileDown,      n: "03", title: "Publication exports",  body: "PNG, SVG, and PDF at print resolution. Vector geometry preserved for journals." },
-  { Icon: Cloud,         n: "04", title: "Quiet autosave",       body: "Your figure is persisted as you work. Pick up on any device, no save button required." },
-  { Icon: LayoutTemplate,n: "05", title: "Starter templates",    body: "Pathways, workflows, schematics — a curated set of starting points instead of a blank page." },
-  { Icon: Wand2,         n: "06", title: "Recolour anything",    body: "Restyle a whole figure with a single palette change. Themes are first-class, not an afterthought." },
-];
-
-function FeaturesIndex() {
-  return (
-    <section id="features" className="hairline-t px-6 py-24">
-      <div className="mx-auto max-w-[1240px]">
-        <Reveal>
-          <div className="grid grid-cols-12 gap-x-6 items-end pb-8 hairline-b">
-            <div className="col-span-12 md:col-span-8">
-              <p className="meta-mono mb-3">§ 01 — Features</p>
-              <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
-                Designed for the page,
-                <br />
-                <span className="italic text-muted-foreground">not the demo.</span>
-              </h2>
-            </div>
-            <div className="col-span-12 mt-4 text-[13px] leading-relaxed text-muted-foreground md:col-span-4 md:mt-0">
-              The minimum surface area you need to build a clear, accurate
-              scientific figure — and nothing more.
-            </div>
-          </div>
-        </Reveal>
-
-        <ol className="grid grid-cols-1 md:grid-cols-2">
-          {features.map(({ Icon, n, title, body }, i) => (
-            <Reveal key={n} delay={i * 0.04}>
-              <li
-                className={cn(
-                  "group relative hairline-b py-8 pr-6 md:pr-10",
-                  "md:[&:nth-child(even)]:pl-10 md:[&:nth-child(odd)]:hairline-r",
-                )}
-              >
-                <div className="flex items-baseline gap-5">
-                  <span className="index-num shrink-0 pt-1">№ {n}</span>
-                  <div className="flex-1">
-                    <div className="mb-2 inline-flex items-center gap-3">
-                      <Icon className="h-4 w-4 text-foreground/70" strokeWidth={1.5} />
-                      <h3 className="font-display text-[26px] leading-tight text-foreground md:text-[30px]">
-                        {title}
-                      </h3>
-                    </div>
-                    <p className="max-w-[52ch] text-[14.5px] leading-[1.55] text-muted-foreground">
-                      {body}
-                    </p>
-                  </div>
-                </div>
-                {/* Editorial hover-mark: a hairline that grows in the
-                    margin, the way an editor would tick a line they liked. */}
-                <span
-                  aria-hidden
-                  className="absolute left-0 top-8 h-px w-0 bg-foreground transition-all duration-500 group-hover:w-10"
-                />
-              </li>
-            </Reveal>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
 // ─── Workflow (animated demo) ─────────────────────────────────────────────────
 function Workflow() {
   return (
     <section
       id="how-it-works"
-      className="hairline-t bg-paper-grain px-6 py-24"
+      className="hairline-t bg-paper-grain-veil px-6 py-24"
     >
       <div className="mx-auto max-w-[1240px]">
         <Reveal>
           <div className="mb-14 grid grid-cols-12 gap-x-6 items-baseline">
             <div className="col-span-12 md:col-span-8">
-              <p className="meta-mono mb-3">§ 02 — Workflow</p>
               <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
                 The workflow,
                 <br />
@@ -450,13 +331,7 @@ function PullQuote() {
   return (
     <section className="hairline-t px-6 py-28">
       <div className="mx-auto max-w-[1240px] grid grid-cols-12 gap-x-6">
-        <div className="col-span-12 lg:col-span-2">
-          <p className="meta-mono">
-            <span className="ink-stamp">✱</span> Coda
-          </p>
-        </div>
-
-        <div className="col-span-12 lg:col-span-8">
+        <div className="col-span-12 lg:col-span-10">
           <blockquote className="font-display text-[40px] leading-[1.05] tracking-[-0.02em] text-foreground text-balance md:text-[64px]">
             <span aria-hidden className="ink-stamp mr-2">&ldquo;</span>
             Make the figure your paper{" "}
@@ -491,7 +366,7 @@ function PullQuote() {
           </div>
         </div>
 
-        <div className="col-span-12 mt-6 lg:col-span-2 lg:mt-0 lg:text-right">
+        <div className="col-span-12 mt-6 lg:col-span-2 lg:mt-0 lg:text-right lg:self-start">
           <p className="colophon">
             Set in Instrument Serif
             <br />
@@ -506,7 +381,7 @@ function PullQuote() {
 // ─── Colophon (footer) ────────────────────────────────────────────────────────
 function Colophon() {
   return (
-    <footer className="hairline-t bg-paper-grain px-6 py-14">
+    <footer className="hairline-t bg-paper-grain-scrim px-6 py-14">
       <div className="mx-auto max-w-[1240px]">
         {/* Big wordmark, set as if it were a printed seal. */}
         <div className="hairline-b pb-10">
@@ -529,6 +404,7 @@ function Colophon() {
           <ColophonCol
             title="Product"
             links={[
+              ["Examples",     "#showcase"],
               ["Features",     "#features"],
               ["Workflow",     "#how-it-works"],
               ["Templates",    "/templates"],
@@ -589,11 +465,12 @@ function ColophonCol({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-paper-grain">
+    <div className="relative z-[1] flex min-h-screen flex-col">
       <Masthead />
       <main className="flex-1">
         <OpeningSpread />
-        <FeaturesIndex />
+        <ScrollMorphShowcase />
+        <FeaturesShowcase />
         <Workflow />
         <UseCases />
         <PullQuote />
