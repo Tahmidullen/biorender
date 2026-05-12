@@ -84,7 +84,7 @@ export function HowItWorksDemo() {
 
   return (
     <div ref={ref} className="mx-auto max-w-5xl">
-      <div className="surface-lifted hairline overflow-hidden">
+      <div className="hairline-box overflow-hidden bg-surface">
         <svg
           viewBox="0 0 800 460"
           className="block w-full h-auto"
@@ -349,15 +349,19 @@ export function HowItWorksDemo() {
         </svg>
       </div>
 
-      {/* Phase counter + caption (the "narrator" line) */}
-      <div className="mt-6 flex items-center justify-center gap-3 px-4 text-center">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-          {String(phase + 1).padStart(2, "0")} / {String(TOTAL_PHASES).padStart(2, "0")}
+      {/* Editorial folio under the plate — like a figure caption set by
+          hand: "№ 03 / 11   ·   Place the cell on the canvas". */}
+      <figcaption className="mt-3 flex items-baseline gap-4 border-t border-border pt-2">
+        <span className="colophon tnum shrink-0">
+          № {String(phase + 1).padStart(2, "0")} / {String(TOTAL_PHASES).padStart(2, "0")}
         </span>
-        <span className="text-[14px] font-medium text-foreground">
+        <span className="text-[13px] text-foreground">
           {PHASE_LABELS[phase]}
         </span>
-      </div>
+        <span className="ml-auto hidden colophon sm:inline">
+          Fig. 02 &nbsp;·&nbsp; receptor-binding.draft
+        </span>
+      </figcaption>
     </div>
   );
 }

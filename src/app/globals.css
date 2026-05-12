@@ -5,13 +5,22 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Design system
-   – Editorial serif display + Geist body
-   – Warm paper background, deep ink foreground
-   – Restrained teal accent (single confident colour, no rainbow gradients)
-   – Reusable gradient/shadow tokens for elegant surfaces
+   DESIGN SYSTEM — Canvas.bio
+   ──────────────────────────────────────────────────────────────────────────
+   An editorial typesetter's set of tokens. Warm paper, deep ink, restrained
+   teal as a working accent, and a single vermilion "stamp" colour reserved
+   for marginalia (printer's marks, hot ticks). The aesthetic targets are:
+
+     - Swiss typographic clarity
+     - Underground / small-press editorial layout
+     - Brutalist hairlines over rounded cards
+     - Tabular monospace metadata, like a colophon
+
+   Anti-targets: glassmorphism, rainbow gradients, generic SaaS card grids.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* ── Animation — kept deliberately small. Movement should be information,
+   not decoration. ─────────────────────────────────────────────────────── */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -19,12 +28,21 @@
 
 @keyframes float-soft {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  50%      { transform: translateY(-4px); }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* A single, very slow rule sweep — used once, in the hero. Recalls a
+   scanning telegraph line rather than a generic shimmer. */
+@keyframes rule-sweep {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  60%  { transform: scaleX(1); transform-origin: left; }
+  61%  { transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
 }
 
 html {
@@ -60,6 +78,7 @@ html {
   --color-ink: var(--ink);
   --color-paper: var(--paper);
   --color-surface: var(--surface);
+  --color-vermilion: var(--vermilion);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -85,118 +104,112 @@ html {
 }
 
 :root {
-  --radius: 0.75rem;
+  /* Buttons + inputs are gently rounded so they read as affordances.
+     Sections, cards and frames are intentionally NOT. */
+  --radius: 0.5rem;
 
-  /* Surfaces — warm paper rather than glaring white */
-  --background: oklch(0.985 0.005 80);            /* warm paper */
-  --paper:      oklch(0.985 0.005 80);
-  --surface:    oklch(1 0 0);                      /* pure white cards */
-  --foreground: oklch(0.21 0.025 245);             /* deep ink */
-  --ink:        oklch(0.18 0.025 245);
+  /* Surfaces — warm paper, never glaring white. */
+  --background: oklch(0.975 0.008 82);            /* warm paper */
+  --paper:      oklch(0.975 0.008 82);
+  --surface:    oklch(0.992 0.005 82);             /* near-paper for inset blocks */
+  --foreground: oklch(0.19 0.022 250);             /* deep ink */
+  --ink:        oklch(0.17 0.022 250);
 
-  --card:       oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.025 245);
-  --popover:    oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.025 245);
+  --card:       oklch(0.992 0.005 82);
+  --card-foreground: oklch(0.19 0.022 250);
+  --popover:    oklch(0.992 0.005 82);
+  --popover-foreground: oklch(0.19 0.022 250);
 
-  /* Primary — refined muted teal (scientific, calm) */
-  --primary:            oklch(0.55 0.09 195);
-  --primary-foreground: oklch(0.99 0.005 80);
+  /* Primary — a confident, slightly desaturated teal-ink.
+     Used sparingly: italic accent words, "open" buttons, key icons. */
+  --primary:            oklch(0.48 0.09 215);
+  --primary-foreground: oklch(0.985 0.005 82);
 
-  --secondary:           oklch(0.96 0.008 80);
-  --secondary-foreground: oklch(0.21 0.025 245);
+  --secondary:           oklch(0.94 0.01 82);
+  --secondary-foreground: oklch(0.19 0.022 250);
 
-  --muted:           oklch(0.955 0.008 80);
-  --muted-foreground: oklch(0.48 0.02 245);
+  --muted:           oklch(0.945 0.01 82);
+  --muted-foreground: oklch(0.42 0.018 250);
 
-  --accent:           oklch(0.94 0.04 195);
-  --accent-foreground: oklch(0.32 0.08 195);
+  --accent:           oklch(0.93 0.035 215);
+  --accent-foreground: oklch(0.30 0.08 215);
 
-  --destructive: oklch(0.58 0.21 27);
+  --destructive: oklch(0.55 0.21 28);
 
-  --border: oklch(0.9 0.01 80);
-  --input:  oklch(0.92 0.008 80);
-  --ring:   oklch(0.55 0.09 195);
+  --border: oklch(0.18 0.02 250 / 0.14);           /* ink, 14% — true hairline */
+  --input:  oklch(0.18 0.02 250 / 0.18);
+  --ring:   oklch(0.48 0.09 215);
 
-  --chart-1: oklch(0.55 0.09 195);   /* teal */
-  --chart-2: oklch(0.62 0.13 60);    /* amber */
-  --chart-3: oklch(0.45 0.08 280);   /* indigo-ink */
-  --chart-4: oklch(0.7  0.12 25);    /* terracotta */
-  --chart-5: oklch(0.4  0.04 240);   /* slate */
+  /* The one "hot" colour. Vermilion, used only as a marginalia tick or
+     printer's stamp — never more than once or twice in a viewport. */
+  --vermilion: oklch(0.56 0.18 32);
 
-  --sidebar: oklch(0.99 0.004 80);
-  --sidebar-foreground: oklch(0.21 0.025 245);
-  --sidebar-primary: oklch(0.55 0.09 195);
-  --sidebar-primary-foreground: oklch(0.99 0.005 80);
-  --sidebar-accent: oklch(0.94 0.04 195);
-  --sidebar-accent-foreground: oklch(0.32 0.08 195);
-  --sidebar-border: oklch(0.9 0.01 80);
-  --sidebar-ring: oklch(0.55 0.09 195);
+  --chart-1: oklch(0.48 0.09 215);
+  --chart-2: oklch(0.56 0.18 32);
+  --chart-3: oklch(0.40 0.06 280);
+  --chart-4: oklch(0.62 0.10 70);
+  --chart-5: oklch(0.36 0.03 250);
 
-  /* Composite tokens (use via var(...) in component styles) */
-  --gradient-paper:
-    radial-gradient(ellipse at top left,
-      color-mix(in oklab, var(--primary) 6%, transparent) 0%,
-      transparent 55%),
-    radial-gradient(ellipse at bottom right,
-      color-mix(in oklab, var(--chart-2) 5%, transparent) 0%,
-      transparent 55%);
-  --gradient-ink:
-    linear-gradient(180deg,
-      var(--ink) 0%,
-      color-mix(in oklab, var(--ink) 92%, var(--primary)) 100%);
+  --sidebar: oklch(0.985 0.006 82);
+  --sidebar-foreground: oklch(0.19 0.022 250);
+  --sidebar-primary: oklch(0.48 0.09 215);
+  --sidebar-primary-foreground: oklch(0.985 0.005 82);
+  --sidebar-accent: oklch(0.93 0.035 215);
+  --sidebar-accent-foreground: oklch(0.30 0.08 215);
+  --sidebar-border: oklch(0.18 0.02 250 / 0.14);
+  --sidebar-ring: oklch(0.48 0.09 215);
 
+  /* Composite tokens.
+     Note: NO ambient page gradient any more. The page is just paper. */
   --shadow-elegant:
-    0 1px 0 0 color-mix(in oklab, var(--ink) 4%, transparent),
-    0 12px 32px -16px color-mix(in oklab, var(--ink) 18%, transparent);
-  --shadow-lifted:
-    0 1px 0 0 color-mix(in oklab, var(--ink) 4%, transparent),
-    0 24px 60px -24px color-mix(in oklab, var(--ink) 24%, transparent);
+    0 1px 0 0 color-mix(in oklab, var(--ink) 6%, transparent);
   --shadow-inset-hairline:
-    inset 0 0 0 1px color-mix(in oklab, var(--ink) 6%, transparent);
+    inset 0 0 0 1px color-mix(in oklab, var(--ink) 10%, transparent);
 
-  /* Subtle paper grain via SVG noise — non-intrusive */
-  --texture-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  /* Paper grain — very faint, never reads as a "texture". */
+  --texture-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.025 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 .dark {
-  --background: oklch(0.16 0.015 245);
-  --paper:      oklch(0.16 0.015 245);
-  --surface:    oklch(0.21 0.02 245);
-  --foreground: oklch(0.97 0.005 80);
-  --ink:        oklch(0.97 0.005 80);
+  --background: oklch(0.15 0.014 250);
+  --paper:      oklch(0.15 0.014 250);
+  --surface:    oklch(0.20 0.018 250);
+  --foreground: oklch(0.965 0.006 82);
+  --ink:        oklch(0.965 0.006 82);
 
-  --card:       oklch(0.21 0.02 245);
-  --card-foreground: oklch(0.97 0.005 80);
-  --popover:    oklch(0.21 0.02 245);
-  --popover-foreground: oklch(0.97 0.005 80);
+  --card:       oklch(0.20 0.018 250);
+  --card-foreground: oklch(0.965 0.006 82);
+  --popover:    oklch(0.20 0.018 250);
+  --popover-foreground: oklch(0.965 0.006 82);
 
-  --primary:            oklch(0.72 0.12 195);
-  --primary-foreground: oklch(0.18 0.025 245);
+  --primary:            oklch(0.72 0.12 215);
+  --primary-foreground: oklch(0.17 0.022 250);
 
-  --secondary:           oklch(0.27 0.02 245);
-  --secondary-foreground: oklch(0.97 0.005 80);
+  --secondary:           oklch(0.26 0.018 250);
+  --secondary-foreground: oklch(0.965 0.006 82);
 
-  --muted:           oklch(0.27 0.02 245);
-  --muted-foreground: oklch(0.72 0.015 245);
+  --muted:           oklch(0.26 0.018 250);
+  --muted-foreground: oklch(0.70 0.012 250);
 
-  --accent:           oklch(0.32 0.05 195);
-  --accent-foreground: oklch(0.92 0.05 195);
+  --accent:           oklch(0.30 0.05 215);
+  --accent-foreground: oklch(0.92 0.05 215);
 
-  --destructive: oklch(0.7 0.19 22);
+  --destructive: oklch(0.70 0.19 24);
 
-  --border: oklch(1 0 0 / 8%);
-  --input:  oklch(1 0 0 / 12%);
-  --ring:   oklch(0.72 0.12 195);
+  --border: oklch(1 0 0 / 0.10);
+  --input:  oklch(1 0 0 / 0.14);
+  --ring:   oklch(0.72 0.12 215);
 
-  --sidebar: oklch(0.18 0.02 245);
-  --sidebar-foreground: oklch(0.97 0.005 80);
-  --sidebar-primary: oklch(0.72 0.12 195);
-  --sidebar-primary-foreground: oklch(0.18 0.025 245);
-  --sidebar-accent: oklch(0.32 0.05 195);
-  --sidebar-accent-foreground: oklch(0.92 0.05 195);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.72 0.12 195);
+  --vermilion: oklch(0.68 0.18 30);
+
+  --sidebar: oklch(0.17 0.018 250);
+  --sidebar-foreground: oklch(0.965 0.006 82);
+  --sidebar-primary: oklch(0.72 0.12 215);
+  --sidebar-primary-foreground: oklch(0.17 0.022 250);
+  --sidebar-accent: oklch(0.30 0.05 215);
+  --sidebar-accent-foreground: oklch(0.92 0.05 215);
+  --sidebar-border: oklch(1 0 0 / 0.10);
+  --sidebar-ring: oklch(0.72 0.12 215);
 }
 
 @layer base {
@@ -205,40 +218,118 @@ html {
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "cv11";
+    /* ss01 / cv11: stylistic alternates in Geist that give a slightly
+       more humanist 'a' and 'g'. ss03 enables a single-storey 'a'. */
+    font-feature-settings: "ss01", "cv11", "cv05";
   }
   html {
     @apply font-sans;
   }
-  /* Editorial serif for display copy. Apply via `font-display` utility. */
+
+  /* Editorial serif for display copy. Apply via `font-display`. */
   .font-display {
     font-family: var(--font-display), ui-serif, Georgia, serif;
     font-feature-settings: "ss01", "liga";
-    letter-spacing: -0.012em;
+    letter-spacing: -0.015em;
   }
 }
 
-/* Reusable utility classes (kept few and named semantically) */
+/* ──────────────────────────────────────────────────────────────────────────
+   Editorial utility classes — kept few, named for what they DO, not how
+   they look. Reach for these instead of inventing one-off Tailwind soup.
+   ────────────────────────────────────────────────────────────────────── */
 @layer utilities {
+
+  /* Paper background with a faint mechanical grain. */
   .bg-paper-grain {
     background-color: var(--paper);
     background-image: var(--texture-grain);
   }
+
+  /* True hairline — 1 device pixel of ink at 10% opacity. */
+  .hairline-t  { border-top:    1px solid var(--border); }
+  .hairline-b  { border-bottom: 1px solid var(--border); }
+  .hairline-l  { border-left:   1px solid var(--border); }
+  .hairline-r  { border-right:  1px solid var(--border); }
+  .hairline-box { border: 1px solid var(--border); }
+
+  /* A double rule — used once or twice, the way a printed colophon
+     marks a major section break. */
+  .rule-double {
+    border-top: 1px solid var(--border);
+    box-shadow: 0 3px 0 -2px var(--border);
+  }
+
+  /* Monospace meta labels: section eyebrows, timestamps, signatures.
+     Wide tracking, lower case — closer to a typesetter's caps style. */
+  .meta-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Tabular figures — for any numeric counter or index. */
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* The "issue / index" number style used to enumerate sections. */
+  .index-num {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--muted-foreground);
+  }
+
+  /* A serif drop numeral used at the head of a workflow step. */
+  .drop-numeral {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-feature-settings: "lnum", "tnum";
+    font-size: clamp(64px, 8vw, 112px);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+
+  /* The vermilion stamp — a single hot tick. Use as an inline span
+     before a label, or as a leading asterisk. Rare. */
+  .ink-stamp { color: var(--vermilion); }
+
+  /* A small caption / colophon line. */
+  .colophon {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* A printed-style underline that looks like a ruler dash, not a
+     CSS link underline. */
+  .underline-rule {
+    text-decoration: none;
+    background-image: linear-gradient(to right, currentColor 50%, transparent 50%);
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    background-size: 6px 1px;
+    padding-bottom: 2px;
+  }
+
+  /* Surface — used very sparingly, only where a true card is needed
+     (e.g. the editor mockup window). */
   .surface-elegant {
     background-color: var(--surface);
     box-shadow: var(--shadow-elegant);
-    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
   }
-  .surface-lifted {
-    background-color: var(--surface);
-    box-shadow: var(--shadow-lifted);
-    border-radius: var(--radius-2xl);
-  }
-  .hairline {
-    box-shadow: var(--shadow-inset-hairline);
-  }
+  .hairline { box-shadow: var(--shadow-inset-hairline); }
+
   .text-balance { text-wrap: balance; }
   .text-pretty  { text-wrap: pretty; }
-  .animate-float-soft { animation: float-soft 6s ease-in-out infinite; }
-  .animate-fade-up    { animation: fade-up 0.6s ease-out both; }
+
+  .animate-float-soft { animation: float-soft 7s ease-in-out infinite; }
+  .animate-fade-up    { animation: fade-up 0.5s ease-out both; }
+  .animate-rule-sweep { animation: rule-sweep 2.6s cubic-bezier(0.6, 0, 0.2, 1) 0.6s 1 both; }
 }

@@ -1,10 +1,11 @@
 "use client";
 
-// Tiny wrapper that fades + lifts its children as they scroll into view.
-// Reused across the home page for cheap, consistent reveal animations.
+// A small fade-up-into-view wrapper.
 //
-// `once: true` means the animation runs the first time the element is
-// scrolled to and never replays — that matches the way most sites feel.
+// Deliberately restrained: only 8px of travel, only 0.4s, only once per
+// element. The point isn't to *show* an animation — it's to settle a block
+// into the page so the eye knows where it landed. Anything bigger would
+// read as a generic Framer Motion flourish.
 
 import { motion } from "motion/react";
 
@@ -19,10 +20,10 @@ export function Reveal({ children, delay = 0, className }: Props) {
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.55, delay, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.4, delay, ease: [0.22, 0.61, 0.36, 1] }}
     >
       {children}
     </motion.div>

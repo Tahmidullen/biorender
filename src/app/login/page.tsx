@@ -8,7 +8,6 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
@@ -20,12 +19,10 @@ export default function LoginPage() {
   const [error,    setError]    = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser()
-      .then(({ data }) => {
-        if (data.user) router.replace("/dashboard");
-        else setChecking(false);
-      })
-      .catch(() => setChecking(false));
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) router.replace("/dashboard");
+      else setChecking(false);
+    });
   }, [router]);
 
   async function handleLogin(e: React.FormEvent) {
@@ -43,82 +40,122 @@ export default function LoginPage() {
   if (checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-paper-grain">
-        <Loader2 className="h-7 w-7 animate-spin text-primary" strokeWidth={1.6} />
+        <Loader2 className="h-6 w-6 animate-spin text-primary" strokeWidth={1.5} />
       </div>
     );
   }
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-paper-grain px-4"
-      style={{ background: "var(--gradient-paper), var(--paper)" }}
-    >
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          <Logo size="lg" />
+    <div className="flex min-h-screen flex-col bg-paper-grain">
+      {/* Small colophon strip at the very top. */}
+      <header className="hairline-b">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 py-3 colophon">
+          <span>Subscriber access · ed. 02</span>
+          <Link
+            href="/"
+            className="text-[10.5px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            ← Home
+          </Link>
         </div>
+      </header>
 
-        <Card className="surface-elegant border-border/70">
-          <CardHeader className="pb-4">
-            <CardTitle className="font-display text-3xl text-foreground">
-              Welcome back
-            </CardTitle>
-            <CardDescription className="text-[13px]">
+      <main className="flex flex-1 items-center justify-center px-6 py-16">
+        <div className="w-full max-w-[480px]">
+          <div className="mb-10 flex justify-center">
+            <Logo size="lg" />
+          </div>
+
+          {/* Title block — set above two stacked hairline rules, with a
+              monospace meta line acting like an editorial folio. */}
+          <div className="hairline-t hairline-b py-7">
+            <p className="meta-mono mb-3">
+              <span className="ink-stamp">✱</span> § Sign in
+            </p>
+            <h1 className="font-display text-[40px] leading-[1] tracking-[-0.02em] text-foreground md:text-[52px]">
+              Welcome
+              <br />
+              <span className="italic text-muted-foreground">back.</span>
+            </h1>
+            <p className="mt-4 text-[13.5px] text-muted-foreground">
               New here?{" "}
-              <Link href="/signup" className="font-medium text-primary hover:underline">
+              <Link
+                href="/signup"
+                className="text-foreground underline-rule"
+              >
                 Create an account
               </Link>
-            </CardDescription>
-          </CardHeader>
+            </p>
+          </div>
 
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  placeholder="you@lab.edu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+          <form onSubmit={handleLogin} className="mt-8 space-y-5">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="email"
+                className="meta-mono"
+              >
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                placeholder="you@lab.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-11 rounded-sm border-border bg-surface text-[14px]"
+              />
+            </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="meta-mono">
                   Password
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <Link
+                  href="#"
+                  className="text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Forgot?
+                </Link>
               </div>
+              <Input
+                id="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-11 rounded-sm border-border bg-surface text-[14px]"
+              />
+            </div>
 
-              {error && (
-                <div className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive">
-                  {error}
-                </div>
-              )}
+            {error && (
+              <div className="hairline-box bg-paper-grain px-3 py-2.5 text-[13px] text-destructive">
+                <span className="meta-mono ink-stamp mr-1.5">✱ Err</span>
+                {error}
+              </div>
+            )}
 
-              <Button type="submit" className="h-11 w-full text-[14px]" disabled={loading}>
-                {loading ? (
-                  <span className="inline-flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.6} />
-                    Logging in…
-                  </span>
-                ) : "Log in"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            <Button
+              type="submit"
+              className="h-11 w-full rounded-sm text-[14px]"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.6} />
+                  Signing in…
+                </span>
+              ) : "Sign in"}
+            </Button>
+
+            <p className="colophon text-center">
+              Secured by Supabase &nbsp;·&nbsp; <span className="tnum">v 02.0001</span>
+            </p>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }
