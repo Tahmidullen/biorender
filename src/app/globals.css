@@ -7,9 +7,11 @@
 /* ──────────────────────────────────────────────────────────────────────────
    DESIGN SYSTEM — Canvas.bio
    ──────────────────────────────────────────────────────────────────────────
-   An editorial typesetter's set of tokens. Warm paper, deep ink, restrained
-   teal as a working accent, and a single vermilion "stamp" colour reserved
-   for marginalia (printer's marks, hot ticks). The aesthetic targets are:
+   Editorial paper with warm umber ink — never icy grey. Primary is deep
+   forest green (biology + print); rails and washes use amber/ochre; borders
+   are taupe; vermilion stays the register “stamp”. No blue-grey UI chrome.
+
+   Contrast comes from ink weight and hairlines — not from tinting the paper.
 
      - Swiss typographic clarity
      - Underground / small-press editorial layout
@@ -129,56 +131,58 @@ html[data-reduced-motion="true"] *::after {
      Sections, cards and frames are intentionally NOT. */
   --radius: 0.5rem;
 
-  /* Surfaces — warm paper, never glaring white. */
-  --background: oklch(0.975 0.008 82);            /* warm paper */
-  --paper:      oklch(0.975 0.008 82);
-  --surface:    oklch(0.992 0.005 82);             /* near-paper for inset blocks */
-  --foreground: oklch(0.19 0.022 250);             /* deep ink */
-  --ink:        oklch(0.17 0.022 250);
+  /* Surfaces — warm cream paper; panels lift lighter than the floor (neutral). */
+  --background: oklch(0.934 0.028 82);
+  --paper:      oklch(0.934 0.028 82);
+  --surface:    oklch(0.986 0.009 82);
+  --foreground: oklch(0.216 0.034 52);
+  --ink:        oklch(0.188 0.038 48);
 
-  --card:       oklch(0.992 0.005 82);
-  --card-foreground: oklch(0.19 0.022 250);
-  --popover:    oklch(0.992 0.005 82);
-  --popover-foreground: oklch(0.19 0.022 250);
+  --card:       oklch(0.993 0.008 84);
+  --card-foreground: oklch(0.22 0.032 52);
+  --popover:    oklch(0.995 0.007 84);
+  --popover-foreground: oklch(0.22 0.032 52);
 
-  /* Primary — a confident, slightly desaturated teal-ink.
-     Used sparingly: italic accent words, "open" buttons, key icons. */
-  --primary:            oklch(0.48 0.09 215);
-  --primary-foreground: oklch(0.985 0.005 82);
+  /* Primary — bottle green on CTAs and emphasis only (paper stays warm). */
+  --primary:            oklch(0.308 0.096 146);
+  --primary-foreground: oklch(0.99 0.01 92);
 
-  --secondary:           oklch(0.94 0.01 82);
-  --secondary-foreground: oklch(0.19 0.022 250);
+  /* Secondary — golden wheat bands for sections & rhythm. */
+  --secondary:            oklch(0.884 0.065 76);
+  --secondary-foreground: oklch(0.26 0.04 52);
 
-  --muted:           oklch(0.945 0.01 82);
-  --muted-foreground: oklch(0.42 0.018 250);
+  --muted:               oklch(0.824 0.024 74);
+  --muted-foreground:    oklch(0.395 0.030 55);
 
-  --accent:           oklch(0.93 0.035 215);
-  --accent-foreground: oklch(0.30 0.08 215);
+  /* Accent — dusty sage hover wash (localized, not a page tint). */
+  --accent:               oklch(0.865 0.052 138);
+  --accent-foreground:    oklch(0.26 0.06 146);
 
-  --destructive: oklch(0.55 0.21 28);
+  --destructive: oklch(0.5 0.2 27);
 
-  --border: oklch(0.18 0.02 250 / 0.14);           /* ink, 14% — true hairline */
-  --input:  oklch(0.18 0.02 250 / 0.18);
-  --ring:   oklch(0.48 0.09 215);
+  --border: oklch(0.38 0.036 58 / 0.52);
+  --input:  oklch(0.38 0.034 55 / 0.5);
+  --ring:   oklch(0.36 0.095 146);
 
-  /* The one "hot" colour. Vermilion, used only as a marginalia tick or
-     printer's stamp — never more than once or twice in a viewport. */
-  --vermilion: oklch(0.56 0.18 32);
+  /* Register stamp — warm coral */
 
-  --chart-1: oklch(0.48 0.09 215);
-  --chart-2: oklch(0.56 0.18 32);
-  --chart-3: oklch(0.40 0.06 280);
-  --chart-4: oklch(0.62 0.10 70);
-  --chart-5: oklch(0.36 0.03 250);
+  --vermilion: oklch(0.57 0.195 38);
 
-  --sidebar: oklch(0.985 0.006 82);
-  --sidebar-foreground: oklch(0.19 0.022 250);
-  --sidebar-primary: oklch(0.48 0.09 215);
-  --sidebar-primary-foreground: oklch(0.985 0.005 82);
-  --sidebar-accent: oklch(0.93 0.035 215);
-  --sidebar-accent-foreground: oklch(0.30 0.08 215);
-  --sidebar-border: oklch(0.18 0.02 250 / 0.14);
-  --sidebar-ring: oklch(0.48 0.09 215);
+  /* Charts — moss, amber, wine, maize, umber (warm skew). */
+  --chart-1: oklch(0.36 0.09 146);
+  --chart-2: oklch(0.68 0.16 58);
+  --chart-3: oklch(0.42 0.14 18);
+  --chart-4: oklch(0.74 0.14 92);
+  --chart-5: oklch(0.35 0.03 52);
+
+  --sidebar: oklch(0.99 0.012 84);
+  --sidebar-foreground: oklch(0.22 0.032 52);
+  --sidebar-primary: oklch(0.34 0.088 146);
+  --sidebar-primary-foreground: oklch(0.99 0.01 92);
+  --sidebar-accent: oklch(0.905 0.055 138);
+  --sidebar-accent-foreground: oklch(0.28 0.07 146);
+  --sidebar-border: oklch(0.42 0.032 58 / 0.36);
+  --sidebar-ring: oklch(0.36 0.095 146);
 
   /* Composite tokens.
      Note: NO ambient page gradient any more. The page is just paper. */
@@ -192,45 +196,45 @@ html[data-reduced-motion="true"] *::after {
 }
 
 .dark {
-  --background: oklch(0.15 0.014 250);
-  --paper:      oklch(0.15 0.014 250);
-  --surface:    oklch(0.20 0.018 250);
-  --foreground: oklch(0.965 0.006 82);
-  --ink:        oklch(0.965 0.006 82);
+  --background: oklch(0.17 0.018 52);
+  --paper:      oklch(0.17 0.018 52);
+  --surface:    oklch(0.234 0.021 55);
+  --foreground: oklch(0.96 0.016 88);
+  --ink:        oklch(0.98 0.012 92);
 
-  --card:       oklch(0.20 0.018 250);
-  --card-foreground: oklch(0.965 0.006 82);
-  --popover:    oklch(0.20 0.018 250);
-  --popover-foreground: oklch(0.965 0.006 82);
+  --card:       oklch(0.23 0.02 55);
+  --card-foreground: oklch(0.96 0.016 88);
+  --popover:    oklch(0.25 0.022 55);
+  --popover-foreground: oklch(0.96 0.016 88);
 
-  --primary:            oklch(0.72 0.12 215);
-  --primary-foreground: oklch(0.17 0.022 250);
+  --primary:            oklch(0.725 0.112 146);
+  --primary-foreground: oklch(0.16 0.04 52);
 
-  --secondary:           oklch(0.26 0.018 250);
-  --secondary-foreground: oklch(0.965 0.006 82);
+  --secondary:           oklch(0.3 0.04 72);
+  --secondary-foreground: oklch(0.96 0.02 88);
 
-  --muted:           oklch(0.26 0.018 250);
-  --muted-foreground: oklch(0.70 0.012 250);
+  --muted:               oklch(0.285 0.028 62);
+  --muted-foreground:    oklch(0.715 0.030 78);
 
-  --accent:           oklch(0.30 0.05 215);
-  --accent-foreground: oklch(0.92 0.05 215);
+  --accent:              oklch(0.32 0.055 138);
+  --accent-foreground:    oklch(0.94 0.04 95);
 
-  --destructive: oklch(0.70 0.19 24);
+  --destructive: oklch(0.65 0.19 27);
 
-  --border: oklch(1 0 0 / 0.10);
-  --input:  oklch(1 0 0 / 0.14);
-  --ring:   oklch(0.72 0.12 215);
+  --border: oklch(0.52 0.03 70 / 0.42);
+  --input:  oklch(0.52 0.03 70 / 0.46);
+  --ring:   oklch(0.725 0.112 146);
 
-  --vermilion: oklch(0.68 0.18 30);
+  --vermilion: oklch(0.72 0.17 38);
 
-  --sidebar: oklch(0.17 0.018 250);
-  --sidebar-foreground: oklch(0.965 0.006 82);
-  --sidebar-primary: oklch(0.72 0.12 215);
-  --sidebar-primary-foreground: oklch(0.17 0.022 250);
-  --sidebar-accent: oklch(0.30 0.05 215);
-  --sidebar-accent-foreground: oklch(0.92 0.05 215);
-  --sidebar-border: oklch(1 0 0 / 0.10);
-  --sidebar-ring: oklch(0.72 0.12 215);
+  --sidebar: oklch(0.19 0.02 52);
+  --sidebar-foreground: oklch(0.96 0.016 88);
+  --sidebar-primary: oklch(0.725 0.112 146);
+  --sidebar-primary-foreground: oklch(0.16 0.04 52);
+  --sidebar-accent: oklch(0.32 0.05 138);
+  --sidebar-accent-foreground: oklch(0.94 0.04 95);
+  --sidebar-border: oklch(0.5 0.025 70 / 0.28);
+  --sidebar-ring: oklch(0.725 0.112 146);
 }
 
 @layer base {
@@ -247,11 +251,11 @@ html[data-reduced-motion="true"] *::after {
     @apply font-sans;
   }
 
-  /* Editorial serif for display copy. Apply via `font-display`. */
+  /* Editorial display — geometric sans (Outfit), not serif script. */
   .font-display {
-    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
     font-feature-settings: "ss01", "liga";
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
   }
 }
 

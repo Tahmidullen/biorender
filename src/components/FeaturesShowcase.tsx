@@ -38,30 +38,26 @@ import { RegisterMarks } from "@/components/RegisterMarks";
 const PHASES = [
   {
     n: "00",
-    title: "Direct manipulation",
-    body:
-      "A precise canvas with snapping, alignment guides, and pixel-perfect handles. Drag a shape; the ruler-marks meet it. No menus to hunt through.",
+    title: "Snap & drag",
+    body: "Guides and handles show up when you need them — less hunting through menus.",
     plateLabel: "Fig. 02a · Move · drag · snap",
   },
   {
     n: "01",
-    title: "Seven thousand shapes",
-    body:
-      "Cell biology, microbiology, lab apparatus, signalling — all drawn to a consistent visual language. Browse them with the keyboard, drop them with the mouse.",
+    title: "Icons galore",
+    body: "Cells, microbes, lab gear — pick from the strip and drop them on the canvas.",
     plateLabel: "Fig. 02b · Library plate",
   },
   {
     n: "02",
-    title: "Recolour anything",
-    body:
-      "Themes are first-class, not an afterthought. Swap palette and the whole figure re-tints in place — stroke and fill, shape and label, in one move.",
+    title: "Recolor in one go",
+    body: "Try a new palette; outlines, fills, and labels move together.",
     plateLabel: "Fig. 02c · Palette transform",
   },
   {
     n: "03",
-    title: "Publication exports",
-    body:
-      "PNG and SVG and PDF at print resolution. Vector geometry preserved for journals. The figure leaves the studio in whatever format the venue asks for.",
+    title: "Export the way they want",
+    body: "PNG for slides, SVG or PDF when someone asks for vectors.",
     plateLabel: "Fig. 02d · Export · 300 dpi",
   },
 ] as const;
@@ -104,9 +100,9 @@ export function FeaturesShowcase() {
           <header className="grid grid-cols-12 gap-x-6 items-end pb-8 hairline-b">
             <div className="col-span-12 md:col-span-8">
               <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
-                Designed for the page,
+                Built for the figure
                 <br />
-                <span className="italic text-muted-foreground">not the demo.</span>
+                <span className="font-medium text-primary">you actually hand in.</span>
               </h2>
             </div>
           </header>
@@ -142,14 +138,13 @@ export function FeaturesShowcase() {
       <div className="mx-auto max-w-[1240px] h-full">
         {/* Sticky stage. top-16 leaves room for the sticky Masthead
             above; height is the viewport minus that strip. */}
-        <div className="sticky top-16 h-[calc(100vh-4rem)] flex flex-col">
-          {/* Section masthead — always visible, pinned at the top of the
-              section so the user has anchoring while scrolling. */}
-          <header className="grid grid-cols-12 gap-x-6 items-end pt-10 pb-6 hairline-b">
+        <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-0 flex-col">
+          {/* Section masthead — compact so phase title + plate fit one viewport */}
+          <header className="grid grid-cols-12 gap-x-6 gap-y-2 items-end hairline-b pb-3 pt-4 md:pb-4 md:pt-6">
             <div className="col-span-12 md:col-span-8">
-              <h2 className="font-display text-[34px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[44px]">
-                Designed for the page,
-                <span className="italic text-muted-foreground"> not the demo.</span>
+              <h2 className="font-display text-[28px] leading-[1.08] tracking-[-0.02em] text-foreground md:text-[40px]">
+                Built for the figure
+                <span className="font-medium text-primary"> you actually hand in.</span>
               </h2>
             </div>
             <PhaseTabs
@@ -159,11 +154,10 @@ export function FeaturesShowcase() {
             />
           </header>
 
-          {/* The pinned stage. Left: feature copy (4 stacked, crossfading).
-              Right: the figure plate (4 stacked demos, crossfading). */}
-          <div className="grid grid-cols-12 gap-x-6 flex-1 items-center py-6">
+          {/* Fill viewport: big preview, short copy */}
+          <div className="grid min-h-0 flex-1 grid-cols-12 gap-x-6 gap-y-3 py-2 md:gap-y-4 md:py-3 items-stretch">
             <CopyColumn active={activeIndex} reduced={reducedMotion} />
-            <div className="col-span-12 md:col-span-7 h-full flex items-center">
+            <div className="col-span-12 flex min-h-[min(48svh,480px)] flex-col md:col-span-7 md:min-h-[min(52svh,560px)]">
               <FeaturePlateFrame label={PHASES[activeIndex].plateLabel}>
                 <Demos active={activeIndex} progress={scrollYProgress} reduced={reducedMotion} />
               </FeaturePlateFrame>
@@ -207,7 +201,7 @@ function PhaseTabs({
 // ─── Left copy column (4 stacked blocks, crossfading) ─────────────────────
 function CopyColumn({ active, reduced }: { active: number; reduced: boolean }) {
   return (
-    <div className="col-span-12 md:col-span-5 relative" style={{ minHeight: 280 }}>
+    <div className="col-span-12 mt-1 md:col-span-5 md:mt-0 relative min-h-0" style={{ minHeight: "min(36vh, 200px)" }}>
       {PHASES.map((p, i) => {
         const isActive = i === active;
         return (
@@ -226,10 +220,10 @@ function CopyColumn({ active, reduced }: { active: number; reduced: boolean }) {
             }}
             style={{ pointerEvents: isActive ? "auto" : "none" }}
           >
-            <h3 className="font-display text-[36px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[44px]">
+            <h3 className="font-display text-[24px] leading-[1.08] tracking-[-0.02em] text-foreground md:text-[30px]">
               {p.title}
             </h3>
-            <p className="mt-5 max-w-[42ch] text-[15px] leading-[1.6] text-muted-foreground">
+            <p className="mt-2 max-w-[38ch] text-[14px] leading-[1.5] text-muted-foreground md:text-[15px]">
               {p.body}
             </p>
           </motion.div>
@@ -250,12 +244,10 @@ function FeaturePlateFrame({
   label: string;
 }) {
   return (
-    <figure className="w-full">
-      <div
-        className="relative hairline-box bg-surface overflow-hidden"
-      >
+    <figure className="flex h-full min-h-0 w-full flex-1 flex-col">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden hairline-box bg-surface">
         <RegisterMarks size={9} inset={6} />
-        <div className="flex items-center gap-2 hairline-b bg-muted/40 px-3 py-2">
+        <div className="flex shrink-0 items-center gap-2 hairline-b bg-muted/40 px-3 py-2">
           <span className="h-2 w-2 rounded-full bg-foreground/20" />
           <span className="h-2 w-2 rounded-full bg-foreground/20" />
           <span className="h-2 w-2 rounded-full bg-foreground/20" />
@@ -263,14 +255,11 @@ function FeaturePlateFrame({
             canvas.bio · scratch
           </span>
         </div>
-        <div
-          className="relative bg-background"
-          style={{ aspectRatio: "16 / 11" }}
-        >
+        <div className="relative min-h-[260px] flex-1 bg-background md:min-h-[320px]">
           {children}
         </div>
       </div>
-      <figcaption className="mt-2 flex items-baseline justify-between border-t border-border pt-2 colophon">
+      <figcaption className="mt-1.5 flex shrink-0 items-baseline justify-between border-t border-border pt-1.5 colophon text-[11px] sm:text-[12px]">
         <span>{label}</span>
         <span className="hidden sm:inline tnum">300 dpi</span>
       </figcaption>
@@ -629,10 +618,10 @@ function LibraryGlyph({ cx, cy, variant }: { cx: number; cy: number; variant: nu
 
 // Colourways shared by scroll-driven DemoRecolour and the reduced-motion static frame.
 const RECOLOUR_PALETTES = [
-  { primary: "oklch(0.48 0.09 215)", accent: "oklch(0.62 0.10 70)", ligand: "oklch(0.40 0.06 280)" },
-  { primary: "oklch(0.46 0.13 22)", accent: "oklch(0.50 0.13 95)", ligand: "oklch(0.40 0.07 320)" },
-  { primary: "oklch(0.30 0.05 250)", accent: "oklch(0.55 0.15 32)", ligand: "oklch(0.40 0.09 200)" },
-  { primary: "oklch(0.18 0.02 250)", accent: "oklch(0.55 0.18 32)", ligand: "oklch(0.18 0.02 250)" },
+  { primary: "oklch(0.34 0.086 146)", accent: "oklch(0.68 0.16 58)", ligand: "oklch(0.42 0.14 18)" },
+  { primary: "oklch(0.46 0.13 22)", accent: "oklch(0.50 0.13 95)", ligand: "oklch(0.38 0.08 320)" },
+  { primary: "oklch(0.38 0.03 52)", accent: "oklch(0.55 0.15 38)", ligand: "oklch(0.74 0.14 92)" },
+  { primary: "oklch(0.35 0.06 146)", accent: "oklch(0.55 0.18 38)", ligand: "oklch(0.62 0.12 138)" },
 ] as const;
 
 // ─── Phase 02 — Recolour ──────────────────────────────────────────────────
@@ -899,7 +888,7 @@ function FileChip({
         <text x="0" y="9"
               textAnchor="middle"
               className="fill-muted-foreground"
-              style={{ font: "italic 7.5px var(--font-display, serif)" }}>
+              style={{ font: "500 7.5px ui-sans-serif, system-ui, sans-serif" }}>
           {sub}
         </text>
       </motion.g>
@@ -945,7 +934,7 @@ function DemoExportStatic() {
           y="9"
           textAnchor="middle"
           className="fill-muted-foreground"
-          style={{ font: "italic 7.5px var(--font-display, serif)" }}
+          style={{ font: "500 7.5px ui-sans-serif, system-ui, sans-serif" }}
         >
           300dpi
         </text>
@@ -966,7 +955,7 @@ function DemoExportStatic() {
           y="9"
           textAnchor="middle"
           className="fill-muted-foreground"
-          style={{ font: "italic 7.5px var(--font-display, serif)" }}
+          style={{ font: "500 7.5px ui-sans-serif, system-ui, sans-serif" }}
         >
           vector
         </text>
@@ -987,7 +976,7 @@ function DemoExportStatic() {
           y="9"
           textAnchor="middle"
           className="fill-muted-foreground"
-          style={{ font: "italic 7.5px var(--font-display, serif)" }}
+          style={{ font: "500 7.5px ui-sans-serif, system-ui, sans-serif" }}
         >
           print
         </text>

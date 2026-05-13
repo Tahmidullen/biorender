@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { EnvironmentalAtmosphere } from "@/components/EnvironmentalAtmosphere";
@@ -17,13 +17,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Editorial serif used for display headings (hero, section titles).
-// Pairs with Geist Sans for a modern scientific-publishing feel.
-const instrumentSerif = Instrument_Serif({
+// Display sans — sharp, editorial contrast with Geist body copy (no script italics).
+const outfitDisplay = Outfit({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${outfitDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-transparent font-sans text-foreground">
         <MotionPreferenceProvider>

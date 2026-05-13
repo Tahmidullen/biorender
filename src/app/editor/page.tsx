@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import EditorToolbar from "@/components/EditorToolbar";
 import AssetLibrary from "@/components/AssetLibrary";
+import FigureAssistantPanel from "@/components/FigureAssistantPanel";
 import type { EditorCanvasHandle } from "@/components/EditorCanvas";
 import type { IconAsset } from "@/lib/assets";
 import { findTemplate } from "@/lib/templates";
@@ -147,9 +148,15 @@ function EditorPageInner() {
         onClear={() => { canvasRef.current?.clearCanvas(); setIsSaved(false); }}
       />
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden xl:flex-row">
         <AssetLibrary onSelectIcon={handleIconClick} />
-        <EditorCanvas ref={canvasRef} />
+        <div className="flex min-h-[min(480px,55vh)] min-w-0 flex-1 flex-col xl:min-h-0">
+          <EditorCanvas ref={canvasRef} />
+        </div>
+        <FigureAssistantPanel
+          canvasRef={canvasRef}
+          onCanvasModified={() => setIsSaved(false)}
+        />
       </div>
     </>
   );

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">RTK-Ras-MAPK signaling to the nucleus (schematic)</title>
+  <desc id="desc">Extracellular ligand activates a receptor tyrosine kinase; Ras, Raf, MEK, ERK relay; ERK influences nuclear transcriptional output. Not to scale.</desc>
+  <defs>
+    <linearGradient id="mem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cfe8f5"/>
+      <stop offset="50%" stop-color="#9ecae8"/>
+      <stop offset="100%" stop-color="#cfe8f5"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0,8 4,0 8" fill="#737373"/>
+    </marker>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0,8 4,0 8" fill="#2171b5"/>
+    </marker>
+    <marker id="arrN" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <polygon points="0 0,9 4.5,0 9" fill="#984ea3"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="920" height="130" fill="#f4f8fb"/>
+  <rect x="0" y="130" width="920" height="120" fill="url(#mem)"/>
+  <rect x="0" y="250" width="920" height="170" fill="#f7f7f7"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#1a1a1a" font-weight="600">Extracellular</text>
+  <text x="24" y="172" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#1a1a1a" font-weight="600">Plasma membrane</text>
+  <text x="24" y="276" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#1a1a1a" font-weight="600">Cytosol</text>
+  <rect x="0" y="118" width="920" height="10" fill="#6baed6" opacity="0.85"/>
+  <rect x="0" y="132" width="920" height="10" fill="#2171b5" opacity="0.9"/>
+  <g fill="#fdae61" stroke="#e66101" stroke-width="1">
+    <circle cx="140" cy="78" r="10"/>
+    <circle cx="170" cy="62" r="10"/>
+    <circle cx="200" cy="78" r="10"/>
+  </g>
+  <text x="120" y="108" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#444">Ligands</text>
+  <g transform="translate(210,118)">
+    <path d="M30 12 L30 -90 L40 -102 L52 -92 L52 18 Z" fill="#bdc9e2" stroke="#4c4c4c" stroke-width="1.2"/>
+    <path d="M90 12 L90 -90 L80 -102 L68 -92 L68 18 Z" fill="#bdc9e2" stroke="#4c4c4c" stroke-width="1.2"/>
+    <ellipse cx="60" cy="-106" rx="38" ry="14" fill="none" stroke="#4c4c4c" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="18" y="-118" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#222" font-weight="600">Activated RTK</text>
+  </g>
+  <path d="M220 78 Q268 92 296 132" fill="none" stroke="#737373" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="310" y="242" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#555">Adaptor / SOS</text>
+  <ellipse cx="420" cy="310" rx="44" ry="28" fill="#e0ecf7" stroke="#2171b5" stroke-width="1.5"/>
+  <text x="393" y="314" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#0d2a4a" font-weight="600">Ras-GTP</text>
+  <g font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#0d2a4a">
+    <rect x="500" y="286" width="72" height="44" rx="6" fill="#ffffff" stroke="#2171b5" stroke-width="1.3"/>
+    <text x="518" y="314" font-weight="600">Raf</text>
+    <rect x="610" y="286" width="72" height="44" rx="6" fill="#ffffff" stroke="#2171b5" stroke-width="1.3"/>
+    <text x="626" y="314" font-weight="600">MEK</text>
+    <rect x="720" y="286" width="72" height="44" rx="6" fill="#ffffff" stroke="#2171b5" stroke-width="1.3"/>
+    <text x="742" y="314" font-weight="600">ERK</text>
+  </g>
+  <path d="M464 310 H500" fill="none" stroke="#2171b5" stroke-width="2" marker-end="url(#arr2)"/>
+  <path d="M572 310 H610" fill="none" stroke="#2171b5" stroke-width="2" marker-end="url(#arr2)"/>
+  <path d="M682 310 H720" fill="none" stroke="#2171b5" stroke-width="2" marker-end="url(#arr2)"/>
+  <path d="M360 200 L360 290" fill="none" stroke="#737373" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+  <!-- Nucleus: positioned to fit viewBox -->
+  <g transform="translate(548,28)">
+    <ellipse cx="268" cy="210" rx="108" ry="76" fill="#fafafa" stroke="#888" stroke-width="1.5"/>
+    <ellipse cx="268" cy="210" rx="98" ry="70" fill="none" stroke="#bbb" stroke-width="1"/>
+    <text x="214" y="206" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#222" font-weight="600">Nucleus</text>
+    <g stroke="#9e9e9e" stroke-width="3" fill="none">
+      <path d="M240 228 c8 -18 34 -18 46 2"/>
+      <path d="M262 234 c12 -22 46 -22 62 6"/>
+      <path d="M296 238 c14 -22 42 -22 54 12"/>
+    </g>
+    <text x="198" y="258" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#444">Chromatin, target genes</text>
+  </g>
+  <path d="M792 310 Q830 298 836 278 Q848 246 834 218 Q824 188 782 174" fill="none" stroke="#984ea3" stroke-width="2.2" marker-end="url(#arrN)"/>
+  <text x="802" y="156" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#5a008a" font-weight="600">Nuclear entry</text>
+  <text x="678" y="136" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#5a008a">TF phosphorylation, gene programs</text>
+  <text x="24" y="404" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#666">Canonical RTK-Ras-MAPK relay (schematic; context-specific). Not to scale.</text>
+</svg>

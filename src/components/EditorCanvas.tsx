@@ -3,6 +3,7 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import * as fabric from "fabric";
 import type { TemplateOp } from "@/lib/templates";
+import type { FigureAssistantCanvasItem } from "@/lib/figure-assistant";
 
 function createDotPattern(): fabric.Pattern {
   const d = 22;
@@ -36,6 +37,10 @@ export type EditorCanvasHandle = {
   loadFromData: (json: string) => void;
   /** Replay a list of template operations onto a fresh canvas. */
   loadTemplate: (ops: TemplateOp[]) => Promise<void>;
+  /** Place AI-generated SVG / text stacks in the viewport centre (publication stacking). */
+  applyFigureAssistantItems: (
+    items: FigureAssistantCanvasItem[],
+  ) => Promise<{ placed: number; failed: number }>;
 };
 
 type FontFamily = "sans" | "serif" | "mono";
@@ -273,6 +278,91 @@ const EditorCanvas = forwardRef<EditorCanvasHandle>((_, ref) => {
 
       canvas.discardActiveObject();
       canvas.renderAll();
+    },
+
+    async applyFigureAssistantItems(items: FigureAssistantCanvasItem[]) {
+      const canvas = fabricRef.current;
+      if (!canvas) return { placed: 0, failed: items.length };
+
+      const W = canvas.width ?? 900;
+      const cx = W / 2;
+      /** Top edge (y-down) where the next stacked block begins */
+      let cursorTop = 48;
+      const gap = 20;
+      const maxSvg = Math.min(420, Math.floor(W * 0.62));
+
+      let placed = 0;
+      let failed = 0;
+
+      for (const item of items) {
+        if (item.type === "text") {
+          const tb = new fabric.Textbox(item.text, {
+            left: cx,
+            top: cursorTop,
+            originX: "center",
+            originY: "top",
+            width: Math.min(W - 80, 520),
+            fontSize: 13,
+            fill: "#334155",
+            fontFamily: FAMILY_MAP.sans,
+            lineHeight: 1.35,
+          });
+          canvas.add(tb);
+          placed += 1;
+          tb.setCoords();
+          cursorTop += tb.getScaledHeight() + gap;
+          canvas.requestRenderAll();
+          continue;
+        }
+
+        try {
+          const obj = await buildSvgObject(item.svg, maxSvg);
+          if (!obj) {
+            failed += 1;
+            continue;
+          }
+
+          const scaledH = obj.getScaledHeight() ?? maxSvg * 0.55;
+          obj.set({
+            left: cx,
+            top: cursorTop + scaledH / 2,
+            originX: "center",
+            originY: "center",
+          });
+          canvas.add(obj);
+          placed += 1;
+
+          cursorTop += scaledH + gap;
+
+          if (item.caption?.trim()) {
+            const caption = new fabric.Textbox(item.caption.trim(), {
+              left: cx,
+              top: cursorTop,
+              originX: "center",
+              originY: "top",
+              width: Math.min(W - 100, 480),
+              fontSize: 12,
+              fill: "#64748b",
+              fontFamily: FAMILY_MAP.serif,
+              fontStyle: "italic",
+              textAlign: "center",
+              lineHeight: 1.3,
+            });
+            canvas.add(caption);
+            caption.setCoords();
+            cursorTop += caption.getScaledHeight() + gap;
+            placed += 1;
+          }
+
+          canvas.requestRenderAll();
+        } catch {
+          failed += 1;
+        }
+      }
+
+      canvas.discardActiveObject();
+      canvas.renderAll();
+      return { placed, failed };
     },
   }));
 

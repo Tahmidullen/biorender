@@ -1,46 +1,24 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  MousePointer2,
-  Atom,
-  Hexagon,
-  Dna,
-  Microscope,
-  FlaskConical,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { HowItWorksDemo } from "@/components/HowItWorksDemo";
 import { UseCases } from "@/components/UseCases";
 import { Reveal } from "@/components/Reveal";
-import { RegisterMarks } from "@/components/RegisterMarks";
 import { FeaturesShowcase } from "@/components/FeaturesShowcase";
 import { ScrollMorphShowcase } from "@/components/ScrollMorphShowcase";
+import { AnimatedBrandMark } from "@/components/AnimatedBrandMark";
+import { FigureCopilotSpotlight } from "@/components/FigureCopilotSpotlight";
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Canvas.bio — landing page, edition 02.
-   ──────────────────────────────────────────────────────────────────────────
-   Structured like a small-press magazine: a masthead, an asymmetric opening
-   spread (with a PCR amplification figure plate), a numbered index of
-   features, an animated workflow plate, a use-cases section, a pull-quote
-   coda, and a colophon footer.
-
-   Every section the previous page had is still here — only the typesetting
-   changed.
-   ────────────────────────────────────────────────────────────────────── */
-
-// ─── Masthead (nav) ───────────────────────────────────────────────────────────
 function Masthead() {
-  // Pricing was removed (no plans yet). Community is the curated
-  // user-submitted gallery at /community.
   const links: { href: string; label: string; external?: boolean }[] = [
-    { href: "#showcase",    label: "Examples"  },
-    { href: "#features",    label: "Features"  },
-    { href: "#how-it-works", label: "Workflow"  },
-    { href: "/templates",    label: "Templates", external: true },
-    { href: "/community",    label: "Community", external: true },
+    { href: "#figure-copilot", label: "Copilot" },
+    { href: "#showcase", label: "Examples" },
+    { href: "#features", label: "Features" },
+    { href: "#how-it-works", label: "How it works" },
+    { href: "/templates", label: "Templates", external: true },
+    { href: "/community", label: "Community", external: true },
   ];
 
   return (
@@ -78,7 +56,7 @@ function Masthead() {
               "h-8 rounded-sm gap-1.5 px-3 text-[12.5px]",
             )}
           >
-            Open editor
+            Try the editor
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -87,35 +65,39 @@ function Masthead() {
   );
 }
 
-// ─── Opening spread (hero) ────────────────────────────────────────────────────
 function OpeningSpread() {
   return (
-    <section className="relative px-6 pt-20 pb-24 sm:pt-28">
+    <section className="relative overflow-hidden px-6 pt-20 pb-24 sm:pt-28">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_90%_60%_at_15%_10%,oklch(0.9_0.06_76/0.45),transparent_55%)] bg-no-repeat dark:bg-[radial-gradient(ellipse_90%_60%_at_15%_10%,oklch(0.28_0.04_72/0.45),transparent_55%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_45%,oklch(0.42_0.08_146/0.12),transparent_50%)] dark:bg-[radial-gradient(circle_at_85%_45%,oklch(0.55_0.1_146/0.18),transparent_50%)]"
+      />
+
       <div className="mx-auto max-w-[1240px]">
-        {/* Title slab — breathes full-width now that the marginalia
-            sidebar is gone. */}
-        <h1 className="font-display text-[12vw] leading-[0.92] tracking-[-0.025em] text-foreground sm:text-[96px] md:text-[120px] lg:text-[140px]">
-          Beautiful
+        <h1 className="font-display text-[12vw] font-semibold leading-[0.92] tracking-[-0.03em] text-foreground sm:text-[96px] md:text-[120px] lg:text-[140px]">
+          Science figures,
           <br />
-          <span className="italic font-normal text-primary">science</span> figures,
-          <br />
-          drafted by hand.
+          <span className="text-primary">minus the fuss.</span>
         </h1>
 
-        {/* Animated rule — runs once on load, like a scanner line. */}
         <div className="mt-12 h-px w-full max-w-[640px] origin-left bg-foreground/80 animate-rule-sweep" />
 
         <div className="mt-10 grid grid-cols-12 gap-x-6">
-          {/* Lead paragraph — set in a narrow column. */}
-          <p className="col-span-12 max-w-[58ch] text-pretty text-[17px] leading-[1.55] text-foreground/85 md:col-span-8">
-            A focused editor with a growing library of clear, publication-style
-            schematic symbols — built for researchers who care how their work looks on
-            the page. Drag, snap, label, ship. The figure should not be the
-            thing that holds the paper up.
+          <p className="col-span-12 max-w-[52ch] text-pretty text-[17px] leading-[1.5] text-foreground/85 md:col-span-8">
+            Icons, arrows, and a canvas that behaves — whether you&apos;re wiring a poster for class or a figure for review.
+            Figure Copilot is optional: Creator mode drafts from your description; Consultant mode chats back about what to fix.
           </p>
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <span className="inline-flex items-center gap-2 rounded-sm border border-primary/35 bg-primary/10 px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-primary">
+            <Sparkles className="h-3.5 w-3.5" strokeWidth={1.8} />
+            Copilot · Creator / Consultant
+          </span>
           <Link
             href="/signup"
             className={cn(
@@ -123,199 +105,32 @@ function OpeningSpread() {
               "h-11 rounded-sm px-5 text-[14px] gap-2",
             )}
           >
-            Open the editor
+            Start free
             <ArrowRight className="h-4 w-4" />
           </Link>
-          <a
-            href="#how-it-works"
-            className="group inline-flex items-center gap-2 text-[14px] text-foreground"
-          >
-            <span className="underline-rule">See how it works</span>
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </a>
         </div>
-      </div>
 
-      {/* Figure plate — PCR amplification diagram (Fig. 01). */}
-      <div className="mx-auto mt-24 max-w-[1240px]">
-        <figure>
-          <div className="relative">
-            <EditorMockup />
-            <RegisterMarks size={11} inset={8} />
-          </div>
-          <figcaption className="mt-3 flex items-baseline justify-between border-t border-border pt-2 colophon">
-            <span>Fig. 01 &nbsp;·&nbsp; PCR amplification, drafted in colour</span>
-            <span className="hidden sm:inline">
-              Denaturation · Annealing · Extension &nbsp;·&nbsp; × 30 cycles
-            </span>
-          </figcaption>
-        </figure>
+        <FigureCopilotSpotlight className="mt-16" />
       </div>
     </section>
   );
 }
 
-/**
- * The static PCR amplification plate. Same drawing as the previous edition
- * — the geometry was already considered, so I only reframed the chrome
- * (no rounded lifted card, hairlines instead).
- */
-function EditorMockup() {
-  return (
-    <div className="hairline-box overflow-hidden bg-surface text-left">
-      <div className="flex items-center gap-2 hairline-b bg-muted/40 px-4 py-2">
-        <span className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span className="ml-3 font-mono text-[11px] text-muted-foreground">
-          pcr-amplification · figure-01
-        </span>
-        <span className="ml-auto colophon">Plate 01</span>
-      </div>
-
-      <div className="grid grid-cols-[200px_1fr] min-h-[320px]">
-        <aside className="hairline-r bg-paper-grain p-3">
-          <p className="meta-mono mb-3 px-1">Library</p>
-          <div className="grid grid-cols-3 gap-1">
-            {[Hexagon, Dna, Atom, Microscope, FlaskConical, Sparkles].map((I, i) => (
-              <div
-                key={i}
-                className="flex aspect-square items-center justify-center hairline-box bg-background text-foreground/75"
-              >
-                <I className="h-4 w-4" strokeWidth={1.4} />
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <div className="relative bg-background p-6">
-          <svg
-            viewBox="0 0 360 200"
-            className="h-full w-full"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden
-          >
-            <defs>
-              <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="1" fill="currentColor" className="text-foreground/10" />
-              </pattern>
-            </defs>
-            <rect width="360" height="200" fill="url(#dots)" />
-
-            {/* Faint vertical dividers between phases */}
-            <line x1="122" y1="38" x2="122" y2="172" className="stroke-border" strokeWidth={1} strokeDasharray="2 4" />
-            <line x1="238" y1="38" x2="238" y2="172" className="stroke-border" strokeWidth={1} strokeDasharray="2 4" />
-
-            {/* ── Panel 1: Denaturation 95°C ─────────────────────── */}
-            <text x="64" y="50" textAnchor="middle" className="fill-primary"
-                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
-              95°C
-            </text>
-            <path d="M 24 86 Q 64 74 104 86" fill="none" className="stroke-primary"
-                  strokeWidth={1.6} strokeLinecap="round" />
-            <path d="M 24 114 Q 64 126 104 114" fill="none" className="stroke-primary"
-                  strokeWidth={1.6} strokeLinecap="round" />
-            {[
-              { x: 36, op: 0.35 },
-              { x: 50, op: 0.18 },
-              { x: 64, op: 0.0  },
-              { x: 78, op: 0.18 },
-              { x: 92, op: 0.35 },
-            ].map((h) => (
-              <line key={h.x} x1={h.x} y1={88} x2={h.x} y2={112}
-                    className="stroke-foreground" strokeWidth={0.8}
-                    strokeDasharray="2 2" opacity={h.op} />
-            ))}
-            <text x="64" y="170" textAnchor="middle" className="fill-muted-foreground"
-                  style={{ font: "italic 11px var(--font-display, serif)" }}>
-              denaturation
-            </text>
-
-            <path d="M 110 100 H 130" className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" />
-            <path d="M 126 96 L 132 100 L 126 104" fill="none"
-                  className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
-
-            {/* ── Panel 2: Annealing 55°C ────────────────────────── */}
-            <text x="180" y="50" textAnchor="middle" className="fill-primary"
-                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
-              55°C
-            </text>
-            <line x1="140" y1="92" x2="220" y2="92"
-                  className="stroke-primary" strokeWidth={1.6} strokeLinecap="round" />
-            <line x1="200" y1="92" x2="220" y2="92"
-                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
-            <line x1="140" y1="112" x2="220" y2="112"
-                  className="stroke-primary" strokeWidth={1.6} strokeLinecap="round" />
-            <line x1="140" y1="112" x2="160" y2="112"
-                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
-            <text x="180" y="170" textAnchor="middle" className="fill-muted-foreground"
-                  style={{ font: "italic 11px var(--font-display, serif)" }}>
-              annealing
-            </text>
-
-            <path d="M 226 100 H 246" className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" />
-            <path d="M 242 96 L 248 100 L 242 104" fill="none"
-                  className="stroke-foreground/55" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
-
-            {/* ── Panel 3: Extension 72°C ────────────────────────── */}
-            <text x="296" y="50" textAnchor="middle" className="fill-primary"
-                  style={{ font: "600 9px ui-monospace, monospace", letterSpacing: "0.12em" }}>
-              72°C
-            </text>
-            <line x1="252" y1="92" x2="340" y2="92"
-                  className="stroke-primary" strokeWidth={2} strokeLinecap="round" />
-            <line x1="252" y1="92" x2="270" y2="92"
-                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
-            <circle cx="328" cy="92" r="6.5"
-                    className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.4} />
-            <line x1="252" y1="112" x2="340" y2="112"
-                  className="stroke-primary" strokeWidth={2} strokeLinecap="round" />
-            <line x1="322" y1="112" x2="340" y2="112"
-                  className="stroke-chart-2" strokeWidth={4} strokeLinecap="round" />
-            <circle cx="264" cy="112" r="6.5"
-                    className="fill-chart-3/30 stroke-chart-3" strokeWidth={1.4} />
-            <text x="296" y="170" textAnchor="middle" className="fill-muted-foreground"
-                  style={{ font: "italic 11px var(--font-display, serif)" }}>
-              extension
-            </text>
-
-            <text x="350" y="190" textAnchor="end"
-                  className="fill-muted-foreground/70"
-                  style={{ font: "italic 9px var(--font-display, serif)" }}>
-              × 30 cycles
-            </text>
-          </svg>
-
-          <div className="absolute right-10 top-10 animate-float-soft text-primary">
-            <MousePointer2 className="h-4 w-4 -rotate-12 fill-primary" strokeWidth={1} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Workflow (animated demo) ─────────────────────────────────────────────────
 function Workflow() {
   return (
-    <section
-      id="how-it-works"
-      className="hairline-t bg-paper-grain-veil px-6 py-24"
-    >
+    <section id="how-it-works" className="hairline-t bg-paper-grain-veil px-6 py-24">
       <div className="mx-auto max-w-[1240px]">
         <Reveal>
           <div className="mb-14 grid grid-cols-12 gap-x-6 items-baseline">
             <div className="col-span-12 md:col-span-8">
-              <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
-                The workflow,
+              <h2 className="font-display text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
+                See it once,
                 <br />
-                <span className="italic text-muted-foreground">drafted in real time.</span>
+                <span className="text-primary">then try it.</span>
               </h2>
             </div>
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground col-span-12 mt-4 md:col-span-4 md:mt-0">
-              The plate below auto-plays a full session — pick a cell, place
-              a receptor, bind a ligand, label, export — on a loop while you
-              read.
+            <p className="text-[14px] leading-relaxed text-muted-foreground col-span-12 mt-4 md:col-span-4 md:mt-0">
+              A quick loop: grab symbols, connect them, export. Copilot is there when you want help sketching or another pair of eyes.
             </p>
           </div>
         </Reveal>
@@ -326,23 +141,18 @@ function Workflow() {
   );
 }
 
-// ─── Pull-quote coda ──────────────────────────────────────────────────────────
-function PullQuote() {
+function ClosingBand() {
   return (
-    <section className="hairline-t px-6 py-28">
-      <div className="mx-auto max-w-[1240px] grid grid-cols-12 gap-x-6">
-        <div className="col-span-12 lg:col-span-10">
-          <blockquote className="font-display text-[40px] leading-[1.05] tracking-[-0.02em] text-foreground text-balance md:text-[64px]">
-            <span aria-hidden className="ink-stamp mr-2">&ldquo;</span>
-            Make the figure your paper{" "}
-            <span className="italic text-muted-foreground">deserves.</span>
-            <span aria-hidden className="ink-stamp ml-1">&rdquo;</span>
-          </blockquote>
+    <section className="hairline-t bg-gradient-to-br from-secondary/[0.42] via-background to-primary/[0.09] px-6 py-28 dark:from-secondary/[0.24] dark:via-background dark:to-primary/[0.14]">
+      <div className="mx-auto grid max-w-[1240px] grid-cols-12 gap-x-6 gap-y-8">
+        <div className="col-span-12 lg:col-span-8">
+          <p className="meta-mono mb-4 text-primary">Why Canvas</p>
+          <h2 className="font-display text-balance text-[38px] font-semibold leading-[1.06] tracking-[-0.02em] text-foreground md:text-[56px]">
+            Looks sharp on screen — holds up on paper.
+          </h2>
 
-          <p className="mt-6 max-w-[56ch] text-[15px] leading-[1.6] text-muted-foreground">
-            Free to start. No watermarks. No upsell modal halfway through your
-            draft. Built by people who&apos;ve sat through one too many ugly
-            conference posters.
+          <p className="mt-6 max-w-[48ch] text-[15px] leading-[1.6] text-muted-foreground">
+            Free to start. No watermark stamped across your work.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -353,12 +163,12 @@ function PullQuote() {
                 "h-11 rounded-sm px-5 text-[14px] gap-2",
               )}
             >
-              Start drawing
+              Start free
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/templates"
-              className="group inline-flex items-center gap-2 text-[14px] text-foreground"
+              className="group inline-flex items-center gap-2 text-[14px] font-medium text-foreground"
             >
               <span className="underline-rule">Browse templates</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -366,11 +176,10 @@ function PullQuote() {
           </div>
         </div>
 
-        <div className="col-span-12 mt-6 lg:col-span-2 lg:mt-0 lg:text-right lg:self-start">
-          <p className="colophon">
-            Set in Instrument Serif
-            <br />
-            &amp; Geist
+        <div className="col-span-12 flex flex-col justify-end border-l border-border/80 pl-6 lg:col-span-4 lg:border-l-0 lg:pl-0 lg:pt-4">
+          <p className="meta-mono mb-2 text-muted-foreground">Nice type</p>
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Readable up close on a PDF and from the back row on a slide.
           </p>
         </div>
       </div>
@@ -378,44 +187,38 @@ function PullQuote() {
   );
 }
 
-// ─── Colophon (footer) ────────────────────────────────────────────────────────
 function Colophon() {
   return (
     <footer className="hairline-t bg-paper-grain-scrim px-6 py-14">
       <div className="mx-auto max-w-[1240px]">
-        {/* Big wordmark, set as if it were a printed seal. */}
         <div className="hairline-b pb-10">
-          <p className="font-display text-[18vw] leading-[0.85] tracking-[-0.04em] text-foreground sm:text-[120px] md:text-[160px]">
-            Canvas
-            <span className="italic font-normal text-muted-foreground">/bio</span>
-          </p>
+          <AnimatedBrandMark />
         </div>
 
         <div className="mt-8 grid grid-cols-12 gap-x-6 gap-y-8">
           <div className="col-span-12 md:col-span-4">
-            <p className="meta-mono mb-3">Imprint</p>
+            <p className="meta-mono mb-3">About</p>
             <p className="max-w-[40ch] text-[13px] leading-[1.6] text-muted-foreground">
-              A studio for clear scientific figures. Drafted as a learning
-              project by Tahmid; not affiliated with BioRender or any of the
-              big incumbents.
+              Canvas.bio is a side project by Tahmid — a friendlier place to draw science figures. Not affiliated with BioRender.
             </p>
           </div>
 
           <ColophonCol
-            title="Product"
+            title="Explore"
             links={[
-              ["Examples",     "#showcase"],
-              ["Features",     "#features"],
-              ["Workflow",     "#how-it-works"],
-              ["Templates",    "/templates"],
-              ["Community",    "/community"],
+              ["Figure Copilot", "#figure-copilot"],
+              ["Examples", "#showcase"],
+              ["Features", "#features"],
+              ["How it works", "#how-it-works"],
+              ["Templates", "/templates"],
+              ["Community", "/community"],
             ]}
           />
           <ColophonCol
             title="Account"
             links={[
-              ["Log in",    "/login"],
-              ["Sign up",   "/signup"],
+              ["Log in", "/login"],
+              ["Sign up", "/signup"],
               ["Dashboard", "/dashboard"],
             ]}
           />
@@ -423,17 +226,14 @@ function Colophon() {
             title="Legal"
             links={[
               ["Privacy", "#"],
-              ["Terms",   "#"],
+              ["Terms", "#"],
               ["Contact", "#"],
             ]}
           />
         </div>
 
-        <div className="mt-10 hairline-t pt-4 flex flex-wrap items-baseline justify-between gap-y-1 colophon">
-          <span>
-            © 2026 Canvas.bio &nbsp;·&nbsp; ed. 02 &nbsp;·&nbsp; set on warm paper
-          </span>
-          <span className="tnum">№ 0001 / 0001</span>
+        <div className="mt-10 hairline-t pt-4 colophon">
+          <span>© 2026 Canvas.bio</span>
         </div>
       </div>
     </footer>
@@ -441,8 +241,12 @@ function Colophon() {
 }
 
 function ColophonCol({
-  title, links,
-}: { title: string; links: [string, string][] }) {
+  title,
+  links,
+}: {
+  title: string;
+  links: [string, string][];
+}) {
   return (
     <div className="col-span-6 md:col-span-2 md:col-start-auto">
       <p className="meta-mono mb-3">{title}</p>
@@ -462,7 +266,6 @@ function ColophonCol({
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
     <div className="relative z-[1] flex min-h-screen flex-col">
@@ -473,7 +276,7 @@ export default function Home() {
         <FeaturesShowcase />
         <Workflow />
         <UseCases />
-        <PullQuote />
+        <ClosingBand />
       </main>
       <Colophon />
     </div>

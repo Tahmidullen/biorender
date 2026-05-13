@@ -368,9 +368,6 @@ export function HowItWorksDemo() {
         <span className="text-[13px] text-foreground">
           {PHASE_LABELS[phase]}
         </span>
-        <span className="ml-auto hidden colophon sm:inline">
-          Fig. 02 &nbsp;·&nbsp; receptor-binding.draft
-        </span>
       </figcaption>
     </div>
   );
@@ -389,14 +386,13 @@ function LibraryItem({
   return (
     <g>
       {/* Motion can interpolate rgba but not color-mix() expressions, so
-          we feed the primary teal as a literal rgba here. These map to
-          --primary at 18% / 50% alpha respectively. */}
+          we use literal rgba tuned to match light-mode --primary (forest). */}
       <motion.rect
         x={12} y={y - 14} width={176} height={28} rx={5}
         initial={false}
         animate={{
-          fill:   active ? "rgba(58, 109, 124, 0.18)" : "rgba(58, 109, 124, 0)",
-          stroke: active ? "rgba(58, 109, 124, 0.50)" : "rgba(58, 109, 124, 0)",
+          fill:   active ? "rgba(55, 92, 68, 0.20)" : "rgba(55, 92, 68, 0)",
+          stroke: active ? "rgba(55, 92, 68, 0.52)" : "rgba(55, 92, 68, 0)",
         }}
         transition={{ duration: 0.25 }}
         strokeWidth={1}

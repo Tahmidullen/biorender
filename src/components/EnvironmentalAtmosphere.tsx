@@ -1,7 +1,7 @@
 "use client";
 
 // Environmental atmosphere — home page only. Fixed layers behind content:
-// parallax on scroll, cursor-linked drift, soft ink/teal washes and schematic
+// parallax on scroll, cursor-linked drift, soft moss/amber washes and schematic
 // symbols (depth and motion without loud SaaS gradients).
 
 import { useEffect } from "react";
@@ -63,7 +63,7 @@ function EnvironmentalAtmosphereCanvas() {
   const symbolLayerY = yMid;
   const symbolLayerRotate = useTransform(scrollYProgress, [0, 1], [0, 8]);
 
-  const tealWashCounterRot = useTransform(fieldRotate, (r) => -Number(r) * 0.85);
+  const warmWashCounterRot = useTransform(fieldRotate, (r) => -Number(r) * 0.85);
   const vermilionOpacity = useTransform(
     scrollYProgress,
     [0, 0.35, 0.7, 1],
@@ -80,8 +80,8 @@ function EnvironmentalAtmosphereCanvas() {
   const cross2Y = useTransform(yMid, (v) => Number(v) * 0.25);
   const glyphY = useTransform(yNear, (v) => Number(v) * 0.2);
 
-  const tealWashInnerX = useTransform(driftSlowX, (v) => -v * 0.6);
-  const tealWashInnerY = useTransform(yMid, (ym) => Number(ym) * 0.7);
+  const warmWashInnerX = useTransform(driftSlowX, (v) => -v * 0.6);
+  const warmWashInnerY = useTransform(yMid, (ym) => Number(ym) * 0.7);
 
   const vermilionScrollY = useTransform(yNear, (v) => Number(v) * 0.35);
   const vermilionMouseY = useTransform(driftFastY, (v) => Number(v) * 0.25);
@@ -90,7 +90,7 @@ function EnvironmentalAtmosphereCanvas() {
   // mouse‑neutral transforms so reduced‑motion users keep depth cues.
   if (reduced) {
     const fieldRotateDeg = -6;
-    const tealCounterRotDeg = -fieldRotateDeg * 0.85;
+    const warmCounterRotDeg = -fieldRotateDeg * 0.85;
     const vermilionOpacityFrozen = 0.35;
 
     return (
@@ -107,7 +107,7 @@ function EnvironmentalAtmosphereCanvas() {
               style={{
                 transform: `rotate(${fieldRotateDeg}deg) scale(1)`,
                 background:
-                  "radial-gradient(circle at 40% 35%, oklch(0.55 0.06 215 / 0.12), transparent 62%)",
+                  "radial-gradient(circle at 40% 35%, oklch(0.46 0.07 146 / 0.2), transparent 62%)",
               }}
             />
           </div>
@@ -118,9 +118,9 @@ function EnvironmentalAtmosphereCanvas() {
             <div
               className="absolute -right-[20%] bottom-[10%] h-[75vmin] w-[75vmin] rounded-full will-change-transform"
               style={{
-                transform: `rotate(${tealCounterRotDeg}deg)`,
+                transform: `rotate(${warmCounterRotDeg}deg)`,
                 background:
-                  "radial-gradient(circle at 60% 55%, oklch(0.72 0.08 75 / 0.095), transparent 65%)",
+                  "radial-gradient(circle at 60% 55%, oklch(0.7 0.14 72 / 0.14), transparent 65%)",
               }}
             />
           </div>
@@ -133,7 +133,7 @@ function EnvironmentalAtmosphereCanvas() {
               style={{
                 opacity: vermilionOpacityFrozen,
                 background:
-                  "radial-gradient(circle, oklch(0.58 0.16 32 / 0.11), transparent 68%)",
+                  "radial-gradient(circle, oklch(0.64 0.18 38 / 0.16), transparent 68%)",
               }}
             />
           </div>
@@ -283,20 +283,20 @@ function EnvironmentalAtmosphereCanvas() {
               rotate: fieldRotate,
               scale: fieldScale,
               background:
-                "radial-gradient(circle at 40% 35%, oklch(0.55 0.06 215 / 0.12), transparent 62%)",
+                "radial-gradient(circle at 40% 35%, oklch(0.46 0.07 146 / 0.2), transparent 62%)",
             }}
           />
         </motion.div>
       </motion.div>
 
-      <motion.div className="absolute inset-0" style={{ x: tealWashInnerX, y: tealWashInnerY }}>
+      <motion.div className="absolute inset-0" style={{ x: warmWashInnerX, y: warmWashInnerY }}>
         <motion.div style={{ x: driftAltX, y: driftSlowY }}>
           <motion.div
             className="absolute -right-[20%] bottom-[10%] h-[75vmin] w-[75vmin] rounded-full will-change-transform"
             style={{
-              rotate: tealWashCounterRot,
+              rotate: warmWashCounterRot,
               background:
-                "radial-gradient(circle at 60% 55%, oklch(0.72 0.08 75 / 0.095), transparent 65%)",
+                "radial-gradient(circle at 60% 55%, oklch(0.7 0.14 72 / 0.14), transparent 65%)",
             }}
           />
         </motion.div>
@@ -309,7 +309,7 @@ function EnvironmentalAtmosphereCanvas() {
             style={{
               opacity: vermilionOpacity,
               background:
-                "radial-gradient(circle, oklch(0.58 0.16 32 / 0.11), transparent 68%)",
+                "radial-gradient(circle, oklch(0.62 0.17 34 / 0.15), transparent 68%)",
             }}
           />
         </motion.div>
