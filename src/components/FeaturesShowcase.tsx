@@ -38,26 +38,26 @@ import { RegisterMarks } from "@/components/RegisterMarks";
 const PHASES = [
   {
     n: "00",
-    title: "Snap & drag",
-    body: "Guides and handles show up when you need them — less hunting through menus.",
+    title: "Layouts that cooperate",
+    body: "Handles and guides appear when they matter, so you are not bouncing through palettes to nudge one edge.",
     plateLabel: "Fig. 02a · Move · drag · snap",
   },
   {
     n: "01",
-    title: "Icons galore",
-    body: "Cells, microbes, lab gear — pick from the strip and drop them on the canvas.",
+    title: "Symbols at the ready",
+    body: "Cells, microbes, and bench icons stay one drag away — drop what you need and keep iterating.",
     plateLabel: "Fig. 02b · Library plate",
   },
   {
     n: "02",
-    title: "Recolor in one go",
-    body: "Try a new palette; outlines, fills, and labels move together.",
+    title: "Palette-wide colour passes",
+    body: "Recolour fills, strokes, and labels together; try another journal palette without redrawing.",
     plateLabel: "Fig. 02c · Palette transform",
   },
   {
     n: "03",
-    title: "Export the way they want",
-    body: "PNG for slides, SVG or PDF when someone asks for vectors.",
+    title: "Exports that match the ask",
+    body: "PNG for projection; SVG or PDF when someone wants scalable artwork for methods or layout.",
     plateLabel: "Fig. 02d · Export · 300 dpi",
   },
 ] as const;
@@ -100,9 +100,9 @@ export function FeaturesShowcase() {
           <header className="grid grid-cols-12 gap-x-6 items-end pb-8 hairline-b">
             <div className="col-span-12 md:col-span-8">
               <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-foreground md:text-[60px]">
-                Built for the figure
+                Finish figures you&apos;d genuinely submit —
                 <br />
-                <span className="font-medium text-primary">you actually hand in.</span>
+                <span className="font-medium text-primary">without losing a weekend to layout.</span>
               </h2>
             </div>
           </header>
@@ -143,8 +143,8 @@ export function FeaturesShowcase() {
           <header className="grid grid-cols-12 gap-x-6 gap-y-2 items-end hairline-b pb-3 pt-4 md:pb-4 md:pt-6">
             <div className="col-span-12 md:col-span-8">
               <h2 className="font-display text-[28px] leading-[1.08] tracking-[-0.02em] text-foreground md:text-[40px]">
-                Built for the figure
-                <span className="font-medium text-primary"> you actually hand in.</span>
+                Finish figures you&apos;d genuinely submit —
+                <span className="font-medium text-primary"> without losing a weekend to layout.</span>
               </h2>
             </div>
             <PhaseTabs
@@ -857,7 +857,7 @@ function DemoExport({
 
       {/* Chips */}
       <FileChip motion={png} center={[200, 125]} label="PNG" sub="300dpi"  />
-      <FileChip motion={svg} center={[200, 125]} label="SVG" sub="vector"  />
+      <FileChip motion={svg} center={[200, 125]} label="SVG" sub="scalable"  />
       <FileChip motion={pdf} center={[200, 125]} label="PDF" sub="print"   />
     </svg>
   );
@@ -957,7 +957,7 @@ function DemoExportStatic() {
           className="fill-muted-foreground"
           style={{ font: "500 7.5px ui-sans-serif, system-ui, sans-serif" }}
         >
-          vector
+          scalable
         </text>
       </g>
       <g transform="translate(154 212)">

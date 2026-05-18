@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Footer lockup — short “vector edit” beat: a few localized scale / rotate fixes on
+ * Footer lockup — short “line edit” beat: a few localized scale / rotate fixes on
  * locked geometry (not per-letter drags), then crossfade to the finished wordmark
  * centered on the same axis as the construction art.
  */
@@ -141,7 +141,7 @@ export function AnimatedBrandMark() {
   return (
     <div ref={wrapRef} className="relative pb-4 md:pb-6" aria-label="Canvas bio brand animation">
       <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="mx-auto h-auto w-full max-w-[720px] overflow-visible text-foreground" xmlns="http://www.w3.org/2000/svg" role="img">
-        <title>Localized vector tweaks resolve into Canvas slash bio</title>
+        <title>Localized line tweaks resolve into Canvas slash bio</title>
         <defs>
           <pattern id="brand-dot-grid" width="12" height="12" patternUnits="userSpaceOnUse">
             <circle cx="1.2" cy="1.2" r="0.85" className="fill-primary/28" />
@@ -219,7 +219,7 @@ export function AnimatedBrandMark() {
         <motion.line x1={230} y1={138} x2={490} y2={138} className="stroke-primary/48" strokeWidth={1.12} initial={{ pathLength: 0 }} animate={run ? { pathLength: [0, 0, 1, 1] } : { pathLength: 0 }} transition={{ duration: T, times: [0, 0.66, 0.88, 1], ease: EASE }} />
       </svg>
 
-      <p className="sr-only">Three localized edits on the vector sketch resolve into the Canvas slash bio wordmark.</p>
+      <p className="sr-only">Three localized edits on the line sketch resolve into the Canvas slash bio wordmark.</p>
     </div>
   );
 }

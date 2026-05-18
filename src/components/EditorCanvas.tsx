@@ -27,7 +27,7 @@ export type EditorCanvasHandle = {
   addText: () => void;
   /** Legacy: drop an emoji glyph onto the canvas. Kept for back-compat. */
   addEmoji: (emoji: string, label: string) => void;
-  /** Drop a real SVG asset onto the canvas (vector, scalable, recolourable). */
+  /** Drop a real SVG asset onto the canvas (scalable paths, recolourable). */
   addSvg: (svgString: string, label?: string) => Promise<void>;
   deleteSelected: () => void;
   changeColor: (color: string) => void;

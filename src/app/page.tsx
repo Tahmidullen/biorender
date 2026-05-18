@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
@@ -13,8 +13,6 @@ import { FigureCopilotSpotlight } from "@/components/FigureCopilotSpotlight";
 
 function Masthead() {
   const links: { href: string; label: string; external?: boolean }[] = [
-    { href: "#figure-copilot", label: "Copilot" },
-    { href: "#showcase", label: "Examples" },
     { href: "#features", label: "Features" },
     { href: "#how-it-works", label: "How it works" },
     { href: "/templates", label: "Templates", external: true },
@@ -89,15 +87,11 @@ function OpeningSpread() {
         <div className="mt-10 grid grid-cols-12 gap-x-6">
           <p className="col-span-12 max-w-[52ch] text-pretty text-[17px] leading-[1.5] text-foreground/85 md:col-span-8">
             Icons, arrows, and a canvas that behaves — whether you&apos;re wiring a poster for class or a figure for review.
-            Figure Copilot is optional: Creator mode drafts from your description; Consultant mode chats back about what to fix.
+            Vector is optional: Creator mode drafts from your description; Consultant mode chats back about what to fix.
           </p>
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <span className="inline-flex items-center gap-2 rounded-sm border border-primary/35 bg-primary/10 px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-primary">
-            <Sparkles className="h-3.5 w-3.5" strokeWidth={1.8} />
-            Copilot · Creator / Consultant
-          </span>
           <Link
             href="/signup"
             className={cn(
@@ -105,7 +99,7 @@ function OpeningSpread() {
               "h-11 rounded-sm px-5 text-[14px] gap-2",
             )}
           >
-            Start free
+            Start for free
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -130,7 +124,7 @@ function Workflow() {
               </h2>
             </div>
             <p className="text-[14px] leading-relaxed text-muted-foreground col-span-12 mt-4 md:col-span-4 md:mt-0">
-              A quick loop: grab symbols, connect them, export. Copilot is there when you want help sketching or another pair of eyes.
+              A quick loop: grab symbols, connect them, export. Vector is there when you want help sketching or another pair of eyes.
             </p>
           </div>
         </Reveal>
@@ -144,9 +138,9 @@ function Workflow() {
 function ClosingBand() {
   return (
     <section className="hairline-t bg-gradient-to-br from-secondary/[0.42] via-background to-primary/[0.09] px-6 py-28 dark:from-secondary/[0.24] dark:via-background dark:to-primary/[0.14]">
-      <div className="mx-auto grid max-w-[1240px] grid-cols-12 gap-x-6 gap-y-8">
-        <div className="col-span-12 lg:col-span-8">
-          <p className="meta-mono mb-4 text-primary">Why Canvas</p>
+      <div className="mx-auto max-w-[1240px]">
+        <div className="col-span-12">
+          <p className="meta-mono mb-4 text-primary">Why Canvas?</p>
           <h2 className="font-display text-balance text-[38px] font-semibold leading-[1.06] tracking-[-0.02em] text-foreground md:text-[56px]">
             Looks sharp on screen — holds up on paper.
           </h2>
@@ -163,7 +157,7 @@ function ClosingBand() {
                 "h-11 rounded-sm px-5 text-[14px] gap-2",
               )}
             >
-              Start free
+              Start for free
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
@@ -174,13 +168,6 @@ function ClosingBand() {
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
-        </div>
-
-        <div className="col-span-12 flex flex-col justify-end border-l border-border/80 pl-6 lg:col-span-4 lg:border-l-0 lg:pl-0 lg:pt-4">
-          <p className="meta-mono mb-2 text-muted-foreground">Nice type</p>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Readable up close on a PDF and from the back row on a slide.
-          </p>
         </div>
       </div>
     </section>
@@ -206,8 +193,7 @@ function Colophon() {
           <ColophonCol
             title="Explore"
             links={[
-              ["Figure Copilot", "#figure-copilot"],
-              ["Examples", "#showcase"],
+              ["Vector", "#vector"],
               ["Features", "#features"],
               ["How it works", "#how-it-works"],
               ["Templates", "/templates"],

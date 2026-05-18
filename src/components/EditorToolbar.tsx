@@ -64,8 +64,8 @@ export default function EditorToolbar({
     <header className="flex h-14 min-h-14 items-center justify-between gap-3 border-b border-border bg-surface px-4">
       {/* Left: logo + editable title + save status */}
       <div className="flex shrink-0 items-center gap-3">
-        <Link href="/dashboard">
-          <Logo size="sm" iconOnly />
+        <Link href="/dashboard" className="inline-flex shrink-0">
+          <Logo asPlain size="sm" iconOnly />
         </Link>
 
         <Separator orientation="vertical" className="h-5" />

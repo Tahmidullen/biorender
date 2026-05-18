@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { EditorCanvasHandle } from "@/components/EditorCanvas";
 import type { FigureAssistantResponse } from "@/lib/figure-assistant";
+import { VectorMascot } from "@/components/VectorMascot";
 
 type Props = {
   canvasRef: RefObject<EditorCanvasHandle | null>;
@@ -32,6 +33,23 @@ export default function FigureAssistantPanel({ canvasRef, onCanvasModified }: Pr
   const [error, setError] = useState<string | null>(null);
   const [reply, setReply] = useState<string | null>(null);
   const [placedMeta, setPlacedMeta] = useState<string | null>(null);
+  /** Mimic “answer being written” after the reply payload arrives (no streaming yet). */
+  const [replySpeaking, setReplySpeaking] = useState(false);
+
+  useEffect(() => {
+    if (busy) {
+      setReplySpeaking(false);
+      return;
+    }
+    if (!reply?.trim()) {
+      setReplySpeaking(false);
+      return;
+    }
+    setReplySpeaking(true);
+    const ms = Math.min(12000, Math.max(1600, reply.length * 28));
+    const id = window.setTimeout(() => setReplySpeaking(false), ms);
+    return () => window.clearTimeout(id);
+  }, [reply, busy]);
 
   async function runAssistant() {
     const trimmed = prompt.trim();
@@ -83,12 +101,17 @@ export default function FigureAssistantPanel({ canvasRef, onCanvasModified }: Pr
         "border-t xl:border-l xl:border-t-0 xl:shadow-none",
       )}
     >
-      <div className="flex items-center gap-2 border-b border-border/80 px-3 py-3">
-        <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.8} />
-        <div>
-          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            Figure Copilot
-          </p>
+      <div className="flex items-center gap-3 border-b border-border/80 px-3 py-2.5">
+        <VectorMascot
+          assistantMode={mode === "diagram" ? "creator" : "consultant"}
+          size={46}
+          tone="editor"
+          busy={busy}
+          speaking={replySpeaking}
+          interactive
+        />
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Vector</p>
           <p className="font-display text-[14px] text-foreground">Your ideas on canvas</p>
         </div>
       </div>
@@ -124,11 +147,11 @@ export default function FigureAssistantPanel({ canvasRef, onCanvasModified }: Pr
         </div>
       </ScrollArea>
 
-      <label className="sr-only" htmlFor="figure-copilot-input">
-        Message for Figure Copilot
+      <label className="sr-only" htmlFor="vector-panel-input">
+        Message for Vector
       </label>
       <textarea
-        id="figure-copilot-input"
+        id="vector-panel-input"
         value={prompt}
         disabled={busy}
         onChange={(e) => setPrompt(e.target.value)}

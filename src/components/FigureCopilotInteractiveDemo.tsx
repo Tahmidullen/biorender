@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffectiveReducedMotion } from "@/components/MotionPreference";
+import { VectorMascot } from "@/components/VectorMascot";
 
-type DemoMode = "creator" | "consultant";
+export type DemoMode = "creator" | "consultant";
+
+type DemoProps = {
+  /** Fires whenever the demo mode changes (tabs, prompts, hover on supported devices). */
+  onModeChange?: (mode: DemoMode) => void;
+};
 
 function ModeButton({
   active,
@@ -26,7 +31,7 @@ function ModeButton({
       type="button"
       role="tab"
       aria-selected={active}
-      id={`copilot-demo-tab-${mode}`}
+      id={`vector-demo-tab-${mode}`}
       onClick={() => onPick(mode)}
       onMouseEnter={() => onHoverPick(mode)}
       onFocus={() => onHoverPick(mode)}
@@ -388,13 +393,17 @@ function ConsultantFlow({ reduced }: { reduced: boolean }) {
   );
 }
 
-export function FigureCopilotInteractiveDemo() {
+export function FigureCopilotInteractiveDemo({ onModeChange }: DemoProps = {}) {
   const reduced = useEffectiveReducedMotion();
   const uid = useId().replace(/:/g, "");
-  const patternId = `copilot-demo-dots-${uid}`;
+  const patternId = `vector-demo-dots-${uid}`;
 
   const [mode, setMode] = useState<DemoMode>("creator");
   const [runKey, setRunKey] = useState(0);
+
+  useEffect(() => {
+    onModeChange?.(mode);
+  }, [mode, onModeChange]);
 
   const replay = useCallback((m: DemoMode) => {
     setMode(m);
@@ -420,17 +429,15 @@ export function FigureCopilotInteractiveDemo() {
   return (
     <div className="flex flex-col gap-0 lg:flex-row">
       <div className="flex min-h-[200px] w-full shrink-0 flex-col border-b border-border bg-muted/25 lg:max-w-[min(100%,280px)] lg:border-b-0 lg:border-r">
-        <div className="flex items-center justify-center gap-2 border-b border-border/70 px-3 py-3">
-          <Sparkles className="h-4 w-4 shrink-0 text-primary" strokeWidth={1.8} />
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Figure Copilot
-          </p>
+        <div className="flex items-center justify-center gap-3 border-b border-border/70 px-3 py-2.5">
+          <VectorMascot assistantMode={mode} size={46} tone="editor" interactive className="shrink-0" />
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Vector</p>
         </div>
 
         <div
           className="flex flex-col items-center gap-2 border-b border-border/50 px-3 py-3"
           role="tablist"
-          aria-label="Copilot demo modes"
+          aria-label="Vector demo modes"
         >
           <div className="flex flex-wrap items-center justify-center gap-2">
             <ModeButton
@@ -487,7 +494,7 @@ export function FigureCopilotInteractiveDemo() {
       <div
         className="relative min-h-[280px] flex-1 overflow-hidden sm:min-h-[300px]"
         role="tabpanel"
-        aria-labelledby={`copilot-demo-tab-${mode}`}
+        aria-labelledby={`vector-demo-tab-${mode}`}
       >
         <AnimatePresence mode="wait">
           {mode === "creator" ? (

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Composition archetype: **Blueprint Schematic** (#7).
- * Editorial vector drafting grammar (grid / leaders / registrations) —
+ * Editorial drafting grammar (grid / leaders / registrations) —
  * genomic RNA-guided nuclease positioning, not receptor-style signaling panels.
  */
 export type ScientificIllustrationDensity = "compact" | "standard" | "editorial";

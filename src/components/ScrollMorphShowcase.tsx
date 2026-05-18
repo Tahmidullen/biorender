@@ -135,7 +135,7 @@ const SCENES: {
   {
     eyebrow: "Templates",
     title: "Start from a pathway.",
-    body: "Receptor to nucleus, already wired. Swap labels — vectors stay crisp for journals.",
+    body: "Receptor to nucleus, already wired. Swap labels — artwork stays sharp at journal resolutions.",
     caption: "Signalling · template",
     kind: "template",
     templateIndex: 0,
@@ -329,7 +329,7 @@ export function ScrollMorphShowcase() {
             </h2>
           </header>
           <p className="max-w-[40ch] text-[14px] leading-[1.6] text-muted-foreground">
-            Pathways, cycles, lab strips — open a template, make it yours, export PNG or vector when you&apos;re happy.
+            Pathways, cycles, lab strips — open a template, make it yours, export PNG or a scalable file when you&apos;re happy.
           </p>
           <Link
             href="/templates"
