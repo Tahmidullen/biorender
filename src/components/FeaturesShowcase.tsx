@@ -58,7 +58,7 @@ const PHASES = [
     n: "03",
     title: "Exports that match the ask",
     body: "PNG for projection; SVG or PDF when someone wants scalable artwork for methods or layout.",
-    plateLabel: "Fig. 02d · Export · 300 dpi",
+    plateLabel: "Fig. 02d · Export",
   },
 ] as const;
 
@@ -259,9 +259,8 @@ function FeaturePlateFrame({
           {children}
         </div>
       </div>
-      <figcaption className="mt-1.5 flex shrink-0 items-baseline justify-between border-t border-border pt-1.5 colophon text-[11px] sm:text-[12px]">
+      <figcaption className="mt-1.5 shrink-0 border-t border-border pt-1.5 colophon text-[11px] sm:text-[12px]">
         <span>{label}</span>
-        <span className="hidden sm:inline tnum">300 dpi</span>
       </figcaption>
     </figure>
   );

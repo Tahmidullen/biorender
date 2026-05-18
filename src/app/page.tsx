@@ -86,8 +86,8 @@ function OpeningSpread() {
 
         <div className="mt-10 grid grid-cols-12 gap-x-6">
           <p className="col-span-12 max-w-[52ch] text-pretty text-[17px] leading-[1.5] text-foreground/85 md:col-span-8">
-            Icons, arrows, and a canvas that behaves — whether you&apos;re wiring a poster for class or a figure for review.
-            Vector is optional: Creator mode drafts from your description; Consultant mode chats back about what to fix.
+            Sketch figures for journals, posters, and slides in one editor.
+            Your personal AI assistant Vector helps with quick diagrams and a last look before you share.
           </p>
         </div>
 
@@ -104,7 +104,16 @@ function OpeningSpread() {
           </Link>
         </div>
 
-        <FigureCopilotSpotlight className="mt-16" />
+      </div>
+    </section>
+  );
+}
+
+function VectorSection() {
+  return (
+    <section className="px-6 py-12 sm:py-16">
+      <div className="mx-auto max-w-[1240px]">
+        <FigureCopilotSpotlight />
       </div>
     </section>
   );
@@ -258,9 +267,10 @@ export default function Home() {
       <Masthead />
       <main className="flex-1">
         <OpeningSpread />
-        <ScrollMorphShowcase />
-        <FeaturesShowcase />
+        <VectorSection />
         <Workflow />
+        <FeaturesShowcase />
+        <ScrollMorphShowcase />
         <UseCases />
         <ClosingBand />
       </main>

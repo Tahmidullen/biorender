@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/Logo";
+import { motion } from "motion/react";
 
 const COLORS = [
   { hex: "#0f172a", label: "Ink"        },
@@ -41,12 +42,18 @@ type Props = {
   onColorChange: (color: string) => void;
   onDownload:    () => void;
   onClear:       () => void;
+  /** How-it-works demo: increment each scripted Save tap to replay animation */
+  savePressPulse?: number;
+  /** How-it-works demo: increment each scripted Export tap */
+  exportPressPulse?: number;
 };
 
 export default function EditorToolbar({
   title, onTitleChange,
   isSaving, isSaved, onSave,
   onAddText, onDelete, onColorChange, onDownload, onClear,
+  savePressPulse = 0,
+  exportPressPulse = 0,
 }: Props) {
   const [editingTitle, setEditingTitle] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -162,35 +169,73 @@ export default function EditorToolbar({
 
       {/* Right: Save + Export */}
       <div className="flex shrink-0 items-center gap-2">
-        <Button
-          variant={isSaved ? "outline" : "secondary"}
-          size="sm"
-          onClick={onSave}
-          disabled={isSaving}
-          title="Save to your dashboard"
-          className={cn(
-            "gap-1.5 text-[12px]",
-            isSaved && "border-primary/30 bg-accent/40 text-primary hover:bg-accent",
-          )}
+        <motion.span
+          key={`demo-save-${savePressPulse}`}
+          className="inline-flex rounded-md"
+          initial={{ scale: 1 }}
+          animate={
+            savePressPulse > 0
+              ? {
+                  scale: [1, 0.93, 1],
+                  boxShadow: [
+                    "0 0 0 0 transparent",
+                    "0 0 0 3px hsl(var(--primary) / 0.45)",
+                    "0 0 0 0 transparent",
+                  ],
+                }
+              : { scale: 1, boxShadow: "0 0 0 0 transparent" }
+          }
+          transition={{ duration: 0.45, ease: [0.22, 0.85, 0.32, 1] }}
         >
-          {isSaving ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={1.8} />
-          ) : isSaved ? (
-            <Check className="h-3.5 w-3.5" strokeWidth={2} />
-          ) : (
-            <Save className="h-3.5 w-3.5" strokeWidth={1.8} />
-          )}
-          {isSaving ? "Saving" : isSaved ? "Saved" : "Save"}
-        </Button>
+          <Button
+            variant={isSaved ? "outline" : "secondary"}
+            size="sm"
+            onClick={onSave}
+            disabled={isSaving}
+            title="Save to your dashboard"
+            className={cn(
+              "gap-1.5 text-[12px]",
+              isSaved && "border-primary/30 bg-accent/40 text-primary hover:bg-accent",
+            )}
+          >
+            {isSaving ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={1.8} />
+            ) : isSaved ? (
+              <Check className="h-3.5 w-3.5" strokeWidth={2} />
+            ) : (
+              <Save className="h-3.5 w-3.5" strokeWidth={1.8} />
+            )}
+            {isSaving ? "Saving" : isSaved ? "Saved" : "Save"}
+          </Button>
+        </motion.span>
 
-        <button
-          onClick={onDownload}
-          title="Download as PNG image"
-          className={cn(buttonVariants({ size: "sm" }), "gap-1.5 text-[12px]")}
+        <motion.span
+          key={`demo-export-${exportPressPulse}`}
+          className="inline-flex rounded-md"
+          initial={{ scale: 1 }}
+          animate={
+            exportPressPulse > 0
+              ? {
+                  scale: [1, 0.93, 1],
+                  boxShadow: [
+                    "0 0 0 0 transparent",
+                    "0 0 0 3px hsl(var(--primary) / 0.45)",
+                    "0 0 0 0 transparent",
+                  ],
+                }
+              : { scale: 1, boxShadow: "0 0 0 0 transparent" }
+          }
+          transition={{ duration: 0.45, ease: [0.22, 0.85, 0.32, 1] }}
         >
-          <Download className="h-3.5 w-3.5" strokeWidth={1.8} />
-          Export PNG
-        </button>
+          <button
+            onClick={onDownload}
+            title="Download as PNG image"
+            className={cn(buttonVariants({ size: "sm" }), "gap-1.5 text-[12px]")}
+          >
+            <Download className="h-3.5 w-3.5" strokeWidth={1.8} />
+            Export PNG
+          </button>
+        </motion.span>
       </div>
     </header>
   );

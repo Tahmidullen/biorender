@@ -1,12 +1,12 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Reveal } from "@/components/Reveal";
 import { useEffectiveReducedMotion } from "@/components/MotionPreference";
 import { cn } from "@/lib/utils";
 
-type OutputId = "journal" | "poster" | "slides" | "grant";
+type OutputId = "journal" | "poster" | "slides";
 
 const OUTPUTS: {
   id: OutputId;
@@ -27,11 +27,6 @@ const OUTPUTS: {
     id: "slides",
     headline: "Presentation slides",
     examples: "Lab meetings · Symposia · Project presentations",
-  },
-  {
-    id: "grant",
-    headline: "Grant proposals",
-    examples: "NIH · ERC · Wellcome · NSF",
   },
 ];
 
@@ -123,27 +118,6 @@ function PosterMiniDiagram({ className }: { className?: string }) {
       <circle cx="74" cy="46" r="5" fill="currentColor" fillOpacity={0.14} />
       <text x="60" y="14" fontSize="7" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.55">
         dose–response schematic
-      </text>
-    </svg>
-  );
-}
-
-/** Grant inset — tight BBB cartoon for floated figure. */
-function GrantInsetMicrograph({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 96 72" className={cn("text-neutral-900", className)} aria-hidden preserveAspectRatio="xMidYMid meet">
-      <rect x="8" y="22" width="22" height="34" rx="2" fill="currentColor" fillOpacity={0.05} stroke="currentColor" strokeOpacity={0.4} strokeWidth="0.9" />
-      <text x="19" y="18" fontSize="6.5" fontWeight="700" textAnchor="middle" fill="currentColor" opacity="0.55">
-        lumen
-      </text>
-      <line x1="34" x2="34" y1="18" y2="58" stroke="currentColor" strokeOpacity={0.55} strokeWidth="1.6" vectorEffect="nonScalingStroke" />
-      <circle cx="46" cy="40" r="8" fill="currentColor" fillOpacity={0.12} stroke="currentColor" strokeOpacity={0.45} strokeWidth="0.85" />
-      <rect x="60" y="24" width="28" height="30" rx="2" fill="currentColor" fillOpacity={0.03} stroke="currentColor" strokeOpacity={0.28} strokeWidth="0.7" strokeDasharray="3 2.5" />
-      <text x="74" y="41" fontSize="6.5" fontWeight="600" textAnchor="middle" fill="currentColor" opacity={0.42}>
-        parenchyma
-      </text>
-      <text x="48" y="68" fontSize="6" textAnchor="middle" fill="currentColor" opacity="0.48">
-        transcytosis route (Fig. 1)
       </text>
     </svg>
   );
@@ -284,45 +258,6 @@ function SlideDeckPlate() {
   );
 }
 
-function GrantPackagePlate() {
-  return (
-    <div
-      className="pointer-events-none relative h-full min-h-0 w-full overflow-hidden bg-[#fcfcfb] px-[8%] pb-[7%] pt-[8%] text-neutral-950"
-      style={{ fontFamily: "'Times New Roman', Times, serif" }}
-    >
-      <header className="border-b border-neutral-900 pb-[3%]">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-neutral-900">Research Strategy — Significance</p>
-      </header>
-
-      <div className="flow-root pt-[4%]">
-        <figure className="float-right mb-[3%] ml-[5%] mt-[1%] w-[38%] max-w-[220px] rounded-sm border border-neutral-900/25 bg-white p-[3%] shadow-sm">
-          <GrantInsetMicrograph className="mx-auto h-auto w-full" />
-          <figcaption className="mt-[4%] text-center text-[9px] leading-snug text-neutral-700">
-            Fig. 1 · Blood–brain barrier transcytosis axis referenced in Aim 2.
-          </figcaption>
-        </figure>
-
-        <p className="text-[11px] leading-[1.38] text-neutral-950">
-          Specific Aim 1: Establish how inflammatory signalling reshapes transcytosis rates across cortical vs cerebellar microvessels using
-          tracer PET paired with single-vessel RNA maps from archival cohorts (N = 6 mice per group per region).
-        </p>
-        <p className="mt-[3.5%] text-[11px] leading-[1.38] text-neutral-950">
-          Aim 2 tests whether pharmacologic tightening of junction belts lowers macromolecule penetrance without collapsing baseline perfusion —
-          reviewers asked for this distinction explicitly during the prior submission cycle.
-        </p>
-        <p className="mt-[3.5%] text-[11px] leading-[1.38] text-neutral-950">
-          Preliminary data show divergent uptake fingerprints between laminar arterioles and capillary beds; the significance paragraph ties those
-          curves to clinically observed dosing plateaus for CNS biologics.
-        </p>
-      </div>
-
-      <p className="pointer-events-none absolute bottom-[5%] left-0 right-0 text-center text-[11px] tabular-nums text-neutral-700">
-        6
-      </p>
-    </div>
-  );
-}
-
 function FormatPreviewPlate({ mode }: { mode: OutputId }) {
   switch (mode) {
     case "journal":
@@ -331,38 +266,47 @@ function FormatPreviewPlate({ mode }: { mode: OutputId }) {
       return <ConferencePosterPlate />;
     case "slides":
       return <SlideDeckPlate />;
-    case "grant":
-      return <GrantPackagePlate />;
   }
 }
 
+/**
+ * All output previews sit on one horizontal track (edge-to-edge). Sliding the track
+ * moves the previous and next panels in sync — no gap, no sequential enter/exit.
+ */
 function FormatPreviewLayer({ display, reduced }: { display: OutputId; reduced: boolean }) {
   const morph = useMemo(
     () => ({
-      duration: reduced ? 0.06 : 0.18,
+      duration: reduced ? 0 : 0.38,
       ease: [0.4, 0, 0.2, 1] as readonly [number, number, number, number],
     }),
     [reduced],
   );
 
+  const slideIndex = Math.max(0, OUTPUTS.findIndex((o) => o.id === display));
+  const xPercent = -(slideIndex * 100) / OUTPUTS.length;
+
   return (
     <div className="relative isolate h-full min-h-0 w-full overflow-hidden">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={display}
-          layout={false}
-          className="pointer-events-none absolute inset-0 min-h-0 overflow-hidden"
-          initial={reduced ? false : { opacity: 0, x: 14 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={reduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
-          transition={{
-            duration: morph.duration,
-            ease: [...morph.ease] as unknown as [number, number, number, number],
-          }}
-        >
-          <FormatPreviewPlate mode={display} />
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        className="flex h-full flex-nowrap"
+        initial={false}
+        animate={{ x: `${xPercent}%` }}
+        transition={{
+          duration: morph.duration,
+          ease: [...morph.ease] as unknown as [number, number, number, number],
+        }}
+        style={{ width: `${OUTPUTS.length * 100}%` }}
+      >
+        {OUTPUTS.map((o) => (
+          <div
+            key={o.id}
+            className="pointer-events-none h-full min-h-0 min-w-0 shrink-0 overflow-hidden"
+            style={{ width: `${100 / OUTPUTS.length}%` }}
+          >
+            <FormatPreviewPlate mode={o.id} />
+          </div>
+        ))}
+      </motion.div>
     </div>
   );
 }
@@ -517,7 +461,7 @@ export function UseCases() {
               </h2>
             </div>
             <div className="col-span-12 mt-8 max-w-md text-[14px] leading-relaxed text-muted-foreground lg:col-span-5 xl:col-span-4 lg:mt-0 lg:justify-self-end">
-              The editor is suited for everything from journal figures to grant applications.
+              The editor is suited for journals, posters, and slides — one canvas, tuned for each format.
             </div>
           </div>
         </Reveal>

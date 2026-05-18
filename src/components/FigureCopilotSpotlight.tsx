@@ -22,7 +22,7 @@ export function FigureCopilotSpotlight({ className }: { className?: string }) {
       <div className="grid gap-8 p-6 sm:gap-10 sm:p-8 md:grid-cols-12 md:gap-10 md:p-10">
         <div className="md:col-span-5">
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 lg:flex-col lg:items-start xl:flex-row xl:items-center">
-            <VectorMascot assistantMode={demoMode} size={118} tone="default" interactive className="shrink-0" />
+            <VectorMascot assistantMode={demoMode} size={88} tone="default" interactive className="shrink-0" />
             <h2
               id="vector-heading"
               className="font-display text-center text-[34px] font-semibold leading-[1.06] tracking-[-0.02em] text-foreground sm:text-left sm:text-[42px]"

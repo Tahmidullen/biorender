@@ -80,7 +80,6 @@ function CreatorFlow({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.12 }}
         >
-          <span className="text-primary">→ </span>
           Draw the MAPK signalling pathway.
         </motion.div>
         <motion.p
